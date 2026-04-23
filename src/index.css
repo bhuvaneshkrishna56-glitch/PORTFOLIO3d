@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-950: #050508;
+  --color-dark-900: #0a0a0f;
+  --color-dark-800: #0f0f1a;
+  --color-dark-700: #151525;
+  --color-dark-600: #1a1a2e;
+  --color-accent-primary: #6c63ff; 
+  --color-accent-secondary: #00d4ff;
+  --color-accent-tertiary: #ff6b9d;
+  --color-text-primary: #f8f9fa;
+  --color-text-secondary: #adb5bd;
+  --color-text-muted: #6c757d;
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass-bg: rgba(15, 15, 26, 0.7);
+}
+
+@layer base {
+  body {
+    @apply bg-dark-950 text-text-primary selection:bg-accent-primary/30;
+  }
+}
+
+.glass-morphism {
+  @apply backdrop-blur-md bg-glass-bg border border-glass-border;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-primary via-accent-secondary to-accent-tertiary font-bold;
+}
+
+.timeline-dot {
+  @apply w-4 h-4 rounded-full bg-accent-primary border-4 border-dark-950 absolute -left-2 top-0;
+}
+
+.btn-primary {
+  @apply px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-semibold hover:shadow-lg hover:shadow-accent-primary/20 transition-all active:scale-95;
+}
+
+.btn-secondary {
+  @apply px-6 py-2.5 rounded-xl border border-glass-border text-text-primary hover:bg-white/5 transition-all active:scale-95;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
