@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiLayout, FiLogOut, FiFolder, FiAward, FiChevronDown, FiChevronUp, FiUser, FiGithub, FiLinkedin, FiTwitter } from 'react-icons/fi';
+import { FiLayout, FiLogOut, FiFolder, FiAward, FiChevronDown, FiChevronUp, FiUser, FiGithub, FiLinkedin, FiTwitter, FiGrid, FiCpu } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import { logoutAdmin } from '../services/authService';
 import { fetchProjects } from '../services/projectService';
 import { fetchCertificates } from '../services/certificateService';
 import { updateResume, deleteResume } from '../services/profileService';
+import { fetchSkills, addSkill, deleteSkill } from '../services/skillService';
 import ProjectForm from '../components/ProjectForm';
 import CertificateForm from '../components/CertificateForm';
 import ProjectList from '../components/ProjectList';
@@ -19,7 +20,8 @@ const Dashboard = () => {
 
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
-  const [loadingData, setLoadingData] = useState(true);
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showCertForm, setShowCertForm] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
@@ -30,14 +32,17 @@ const Dashboard = () => {
   }, [user, authLoading, navigate]);
 
   const loadAllData = useCallback(async () => {
-    setLoadingData(true);
-    const [projectsResult, certsResult] = await Promise.all([
+    setLoading(true);
+    const [projRes, certRes, skillRes] = await Promise.all([
       fetchProjects(),
       fetchCertificates(),
+      fetchSkills()
     ]);
-    if (!projectsResult.error) setProjects(projectsResult.projects);
-    if (!certsResult.error) setCertificates(certsResult.certificates);
-    setLoadingData(false);
+    
+    setProjects(projRes.projects || []);
+    setCertificates(certRes.certificates || []);
+    setSkills(skillRes.skills || []);
+    setLoading(false);
   }, []);
 
   useEffect(() => { if (user) loadAllData(); }, [user, loadAllData]);
@@ -71,18 +76,23 @@ const Dashboard = () => {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex gap-4 mb-8">
-           {['projects', 'certificates', 'profile'].map(tab => (
-             <button 
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2 rounded-xl text-sm font-bold capitalize transition-all ${
-                activeTab === tab ? 'bg-accent-primary text-white' : 'bg-dark-800 text-text-muted border border-glass-border'
+        <div className="flex flex-wrap gap-2 mb-8 bg-dark-600/30 p-2 rounded-2xl border border-glass-border">
+          {[
+            { id: 'projects', label: 'Projects', icon: <FiGrid /> },
+            { id: 'certificates', label: 'Certificates', icon: <FiAward /> },
+            { id: 'skills', label: 'Tech Stack', icon: <FiCpu /> },
+            { id: 'profile', label: 'Profile', icon: <FiUser /> }
+          ].map(tab => (
+            <button 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold capitalize transition-all ${
+                activeTab === tab.id ? 'bg-accent-primary text-white' : 'text-text-muted hover:text-white hover:bg-white/5'
               }`}
-             >
-               {tab}
-             </button>
-           ))}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -133,7 +143,7 @@ const Dashboard = () => {
              )}
 
              {/* Tab Content */}
-             {loadingData ? <LoadingSpinner /> : (
+             {loading ? <LoadingSpinner /> : (
                <>
                  {activeTab === 'projects' && (
                     <ProjectList projects={projects} onProjectDeleted={loadAllData} />
@@ -141,6 +151,77 @@ const Dashboard = () => {
                  {activeTab === 'certificates' && (
                     <CertificateList certificates={certificates} onCertificateDeleted={loadAllData} />
                  )}
+                  {activeTab === 'skills' && (
+                     <div className="space-y-8">
+                        {/* Add Skill Form */}
+                        <div className="glass-morphism p-8 rounded-[2.5rem] border-accent-primary/20">
+                           <h3 className="text-xl font-bold mb-6">Add New Technology</h3>
+                           <div className="flex flex-col md:flex-row gap-4">
+                              <select 
+                                id="skill-category"
+                                className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm"
+                              >
+                                 <option value="Frontend">Frontend</option>
+                                 <option value="Backend">Backend</option>
+                                 <option value="Programming">Programming</option>
+                                 <option value="Tools">Tools</option>
+                              </select>
+                              <input 
+                                id="skill-name"
+                                type="text" 
+                                placeholder="Technology Name (e.g., Docker)" 
+                                className="flex-grow bg-dark-700 border border-glass-border p-3 rounded-xl text-sm"
+                              />
+                              <button 
+                                onClick={async () => {
+                                   const name = document.getElementById('skill-name').value;
+                                   const category = document.getElementById('skill-category').value;
+                                   if (name) {
+                                      const res = await addSkill({ name, category });
+                                      if (res.error) alert(res.error);
+                                      else {
+                                         alert('Skill added!');
+                                         document.getElementById('skill-name').value = '';
+                                         loadAllData();
+                                      }
+                                   }
+                                }}
+                                className="btn-primary py-3 px-8"
+                              >
+                                 Add Skill
+                              </button>
+                           </div>
+                        </div>
+
+                        {/* Skills List */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                           {['Frontend', 'Backend', 'Programming', 'Tools'].map(cat => (
+                              <div key={cat} className="glass-morphism p-6 rounded-3xl">
+                                 <h4 className="text-xs font-black uppercase tracking-tighter text-text-muted mb-4">{cat}</h4>
+                                 <div className="space-y-2">
+                                    {skills.filter(s => s.category === cat).map(skill => (
+                                       <div key={skill.id} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                                          <span className="text-sm font-medium">{skill.name}</span>
+                                          <button 
+                                            onClick={async () => {
+                                               if(window.confirm('Delete this skill?')) {
+                                                  await deleteSkill(skill.id);
+                                                  loadAllData();
+                                               }
+                                            }}
+                                            className="text-error/60 hover:text-error"
+                                          >
+                                            ×
+                                          </button>
+                                       </div>
+                                    ))}
+                                 </div>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
+
                   {activeTab === 'profile' && (
                     <div className="glass-morphism p-10 rounded-[2.5rem] space-y-10">
                        <h2 className="text-2xl font-bold">Profile & Resume</h2>
@@ -201,14 +282,9 @@ const Dashboard = () => {
                              <input disabled value="Web Developer" className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" />
                           </div>
                        </div>
-                       <p className="text-xs text-accent-tertiary">Note: Direct profile editing is locked for security. Update via supabase console.</p>
-                       <div className="flex gap-4 pt-4">
-                          <FiGithub size={20} className="text-text-muted" />
-                          <FiLinkedin size={20} className="text-text-muted" />
-                          <FiTwitter size={20} className="text-text-muted" />
-                       </div>
                     </div>
-                 )}
+                  )}
+)}
                </>
              )}
           </div>
