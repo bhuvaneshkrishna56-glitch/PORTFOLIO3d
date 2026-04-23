@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiDownload, FiCheckCircle } from 'react-icons/fi';
 import { fetchProfile } from '../services/profileService';
+import { fetchProjects } from '../services/projectService';
 import TechStack from '../components/TechStack';
 import Experience from '../components/Experience';
 
@@ -10,17 +11,32 @@ const HeroScene = lazy(() => import('../3d/HeroScene'));
 
 const Home = () => {
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
+  const [projectCount, setProjectCount] = useState(0);
+  const [techCount, setTechCount] = useState(0);
 
   useEffect(() => {
-    const getProfile = async () => {
+    const getStats = async () => {
+      // 1. Fetch Profile for Resume
       const { profile } = await fetchProfile();
       if (profile?.resume_url) setResumeUrl(profile.resume_url);
+
+      // 2. Fetch Projects for Stats
+      const { projects } = await fetchProjects();
+      if (projects) {
+        setProjectCount(projects.length);
+        
+        // Calculate unique technologies
+        const allTech = projects.flatMap(p => p.tech_stack || []);
+        const uniqueTech = [...new Set(allTech)];
+        setTechCount(uniqueTech.length);
+      }
     };
-    getProfile();
+    getStats();
   }, []);
+
   const stats = [
-    { value: '5+', label: 'Projects Built', color: 'text-accent-primary' },
-    { value: '10+', label: 'Technologies', color: 'text-accent-secondary' },
+    { value: projectCount > 0 ? `${projectCount}+` : '0', label: 'Projects Built', color: 'text-accent-primary' },
+    { value: techCount > 0 ? `${techCount}+` : '0', label: 'Technologies', color: 'text-accent-secondary' },
     { value: '1', label: 'Hackathon Win', color: 'text-accent-tertiary' },
     { value: 'Yes', label: 'Internships', color: 'text-green-400' },
   ];
