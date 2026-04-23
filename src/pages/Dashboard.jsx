@@ -180,48 +180,60 @@ const Dashboard = () => {
                            <p className="text-text-muted text-sm">Choose the 3D soul of your portfolio</p>
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                            {[
                               { id: 'cyber_grid', name: 'Cyberpunk', desc: 'Neon city', bg: 'bg-black border border-cyan-500' },
-                              { id: 'glass_universe', name: 'Glass Universe', desc: 'Floating glass', bg: 'bg-indigo-900' },
-                              { id: 'neural_net', name: 'Neural Net', desc: 'AI nodes', bg: 'bg-slate-900' },
-                              { id: 'space_orbit', name: 'Space Orbit', desc: 'Planets', bg: 'bg-black shadow-[inset_0_0_10px_white/20]' },
-                              { id: 'block_stack', name: 'Block Stack', desc: '3D blocks', bg: 'bg-orange-600' },
-                              { id: 'hologram', name: 'Hologram', desc: 'Sci-fi UI', bg: 'bg-black border border-blue-300' },
-                              { id: 'tunnel', name: 'Tunnel', desc: 'Infinite depth', bg: 'bg-blue-950' },
-                              { id: 'liquid_metal', name: 'Liquid Metal', desc: 'Reflections', bg: 'bg-slate-300' },
-                              { id: 'electric', name: 'Electric', desc: 'Energy flow', bg: 'bg-violet-900' },
-                              { id: 'helix', name: 'DNA Helix', desc: 'Genetic', bg: 'bg-green-900' },
+                              { id: 'glass_universe', name: 'Glass', desc: 'Floating glass', bg: 'bg-indigo-900' },
+                              { id: 'neural_net', name: 'Neural', desc: 'AI nodes', bg: 'bg-slate-900' },
+                              { id: 'space_orbit', name: 'Orbit', desc: 'Planets', bg: 'bg-black' },
+                              { id: 'block_stack', name: 'Blocks', desc: '3D blocks', bg: 'bg-orange-600' },
+                              { id: 'hologram', name: 'Hologram', desc: 'Sci-fi UI', bg: 'bg-black' },
+                              { id: 'tunnel', name: 'Tunnel', desc: 'Infinite', bg: 'bg-blue-950' },
+                              { id: 'liquid_metal', name: 'Liquid', desc: 'Reflections', bg: 'bg-slate-300' },
+                              { id: 'electric', name: 'Electric', desc: 'Energy', bg: 'bg-violet-900' },
+                              { id: 'helix', name: 'DNA', desc: 'Genetic', bg: 'bg-green-900' },
                               
                               // Space
-                              { id: 'galaxy_core', name: 'Galaxy', desc: 'Spiral core', bg: 'bg-blue-900' },
-                              { id: 'warp_speed', name: 'Warp Speed', desc: 'Hyper rush', bg: 'bg-zinc-900' },
-                              { id: 'black_hole', name: 'Black Hole', desc: 'Light bending', bg: 'bg-black ring-2 ring-orange-500' },
-                              { id: 'nebula', name: 'Nebula', desc: 'Space fog', bg: 'bg-indigo-900' },
-                              { id: 'solar_system', name: 'Solar System', desc: 'Planets', bg: 'bg-black' },
-                              { id: 'planet_surface', name: 'Surface', desc: 'Alien world', bg: 'bg-orange-900' },
-                              { id: 'space_station', name: 'Station', desc: 'Controls', bg: 'bg-slate-800' },
-                              { id: 'constellation', name: 'Constell', desc: 'Star lines', bg: 'bg-black' },
-                              { id: 'telescope', name: 'Telescope', desc: 'Lens view', bg: 'bg-zinc-950 rounded-full' },
-                              { id: 'portal', name: 'Portal', desc: 'Ring gate', bg: 'bg-cyan-900' },
+                              { id: 'galaxy_core', name: 'Galaxy', desc: 'Spiral', bg: 'bg-blue-900' },
+                              { id: 'warp_speed', name: 'Warp', desc: 'Hyper', bg: 'bg-zinc-900' },
+                              { id: 'black_hole', name: 'B-Hole', desc: 'L-Bending', bg: 'bg-black' },
+                              { id: 'nebula', name: 'Nebula', desc: 'Fog', bg: 'bg-indigo-900' },
+                              { id: 'solar_system', name: 'Solar', desc: 'System', bg: 'bg-black' },
+                              { id: 'planet_surface', name: 'Planet', desc: 'Surface', bg: 'bg-orange-900' },
+                              { id: 'space_station', name: 'Station', desc: 'Hub', bg: 'bg-slate-800' },
+                              { id: 'constellation', name: 'Constell', desc: 'Lines', bg: 'bg-black' },
+                              { id: 'telescope', name: 'Lens', desc: 'Scope', bg: 'bg-zinc-950' },
+                              { id: 'portal', name: 'Portal', desc: 'Gate', bg: 'bg-cyan-900' },
 
-                              // Nature (New)
-                              { id: 'spring_blossom', name: 'Blossom', desc: 'Falling petals', bg: 'bg-gradient-to-b from-black to-green-900' },
-                              { id: 'flower_field', name: 'Flower Field', desc: 'Floating blooms', bg: 'bg-pink-900/50' },
-                              { id: 'breeze_leaves', name: 'Breeze', desc: 'Wind & leaves', bg: 'bg-emerald-900/30' },
-                              { id: 'bloom_interact', name: 'Bloom Click', desc: 'Growth on hover', bg: 'bg-black' },
-                              { id: 'glass_forest', name: 'Glass Forest', desc: 'Glass & nature', bg: 'bg-green-950' },
-                              { id: 'butterfly', name: 'Butterfly', desc: 'Motion & color', bg: 'bg-indigo-950' },
-                              { id: 'spring_sky', name: 'Spring Sky', desc: 'Clouds & islands', bg: 'bg-sky-900' },
-                              { id: 'growing_ui', name: 'Growing', desc: 'Organic growth', bg: 'bg-green-800' },
-                              { id: 'water_garden', name: 'Water Garden', desc: 'Reflections', bg: 'bg-cyan-950' },
-                              { id: 'sakura_exp', name: 'Sakura Exp', desc: 'Petal burst', bg: 'bg-pink-600' }
+                              // Nature
+                              { id: 'spring_blossom', name: 'Blossom', desc: 'Sakura', bg: 'bg-green-900' },
+                              { id: 'flower_field', name: 'Field', desc: 'Blooms', bg: 'bg-pink-900' },
+                              { id: 'breeze_leaves', name: 'Breeze', desc: 'Leaves', bg: 'bg-emerald-900' },
+                              { id: 'bloom_interact', name: 'Bloom', desc: 'Growth', bg: 'bg-black' },
+                              { id: 'glass_forest', name: 'Forest', desc: 'Nature', bg: 'bg-green-950' },
+                              { id: 'butterfly', name: 'Fly', desc: 'Motion', bg: 'bg-indigo-950' },
+                              { id: 'spring_sky', name: 'Sky', desc: 'Islands', bg: 'bg-sky-900' },
+                              { id: 'growing_ui', name: 'Grow', desc: 'Organic', bg: 'bg-green-800' },
+                              { id: 'water_garden', name: 'Water', desc: 'Mirror', bg: 'bg-cyan-950' },
+                              { id: 'sakura_exp', name: 'Sakura', desc: 'Burst', bg: 'bg-pink-600' },
+
+                              // Tech & UI (New)
+                              { id: 'data_stream', name: 'Data', desc: 'Streams', bg: 'bg-blue-600' },
+                              { id: 'layered_depth', name: 'Layers', desc: 'Z-Axis', bg: 'bg-slate-700' },
+                              { id: 'code_matrix', name: 'Matrix', desc: 'Hacker', bg: 'bg-black border border-green-500' },
+                              { id: 'grid_cards', name: 'Cards', desc: '3D Grid', bg: 'bg-orange-500' },
+                              { id: 'game_world', name: 'Game', desc: 'RPG Hub', bg: 'bg-indigo-600' },
+                              { id: 'tech_lab', name: 'Lab', desc: 'Exp UI', bg: 'bg-zinc-800' },
+                              { id: 'luxury_dark', name: 'Luxury', desc: 'Gold/Dark', bg: 'bg-black ring-1 ring-yellow-600' },
+                              { id: 'bento_3d', name: 'Bento', desc: 'Depth', bg: 'bg-slate-200' },
+                              { id: 'fluid_wave', name: 'Wave', desc: 'Organic', bg: 'bg-blue-400' },
+                              { id: 'cube_nav', name: 'Cube', desc: 'Interact', bg: 'bg-violet-600' }
                            ].map(t => (
                               <motion.div 
                                 key={t.id}
-                                whileHover={{ scale: 1.05 }}
-                                className={`glass-morphism p-4 rounded-[2rem] border-2 transition-all cursor-pointer ${
-                                   activeTheme === t.id ? 'border-accent-primary ring-2 ring-accent-primary/20' : 'border-white/5 opacity-70 hover:opacity-100'
+                                whileHover={{ scale: 1.1, zIndex: 10 }}
+                                className={`glass-morphism p-3 rounded-[1.5rem] border-2 transition-all cursor-pointer ${
+                                   activeTheme === t.id ? 'border-accent-primary shadow-lg shadow-accent-primary/20' : 'border-white/5 opacity-70 hover:opacity-100'
                                 }`}
                                 onClick={async () => {
                                    setActiveTheme(t.id);
@@ -230,11 +242,11 @@ const Dashboard = () => {
                                    else alert(`${t.name} Activated!`);
                                 }}
                               >
-                                 <div className={`w-full h-16 rounded-xl mb-3 ${t.bg} flex items-center justify-center text-[8px] font-black uppercase text-white overflow-hidden`}>
+                                 <div className={`w-full h-12 rounded-lg mb-2 ${t.bg} flex items-center justify-center text-[6px] font-black uppercase text-white overflow-hidden`}>
                                     {t.id.replace('_', ' ')}
                                  </div>
-                                 <h4 className="font-bold text-[10px] mb-1 truncate">{t.name}</h4>
-                                 <p className="text-[9px] text-text-muted leading-tight h-6 overflow-hidden">{t.desc}</p>
+                                 <h4 className="font-bold text-[9px] mb-0.5 truncate">{t.name}</h4>
+                                 <p className="text-[8px] text-text-muted truncate leading-tight">{t.desc}</p>
                               </motion.div>
                            ))}
                         </div>

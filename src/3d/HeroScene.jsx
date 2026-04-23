@@ -1,59 +1,64 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Torus, Center } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Box, Center, MeshWobbleMaterial } from '@react-three/drei';
 import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { fetchProfile } from '../services/profileService';
 import ParticleField from './ParticleField';
 import FloatingShapes from './FloatingShapes';
 
-// --- Specialized Nature Components ---
+// --- Specialized Tech & UI Components ---
 
-const SakuraPetals = ({ count = 100, color = "#ffb7c5" }) => {
-  const petals = useRef();
-  const data = useMemo(() => Array.from({ length: count }).map(() => ({
-    pos: [(Math.random() - 0.5) * 20, Math.random() * 20, (Math.random() - 0.5) * 20],
-    spin: Math.random() * 0.05,
-    speed: Math.random() * 0.02 + 0.01
-  })), [count]);
-
-  useFrame(() => {
-    petals.current.children.forEach((p, i) => {
-      p.position.y -= data[i].speed;
-      p.rotation.x += data[i].spin;
-      p.rotation.z += data[i].spin;
-      if (p.position.y < -10) p.position.y = 10;
+const DataStream = () => {
+  const group = useRef();
+  useFrame((state) => {
+    group.current.children.forEach((c, i) => {
+      c.position.y -= 0.1;
+      if (c.position.y < -15) c.position.y = 15;
     });
   });
-
   return (
-    <group ref={petals}>
-      {data.map((d, i) => (
-        <mesh key={i} position={d.pos}>
-          <planeGeometry args={[0.2, 0.2]} />
-          <meshBasicMaterial color={color} side={THREE.DoubleSide} transparent opacity={0.8} />
+    <group ref={group}>
+      {Array.from({ length: 50 }).map((_, i) => (
+        <mesh key={i} position={[(Math.random() - 0.5) * 20, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 10]}>
+          <boxGeometry args={[0.02, 2, 0.02]} />
+          <meshBasicMaterial color="#0066ff" transparent opacity={0.5} />
         </mesh>
       ))}
     </group>
   );
 };
 
-const ButterflyField = () => {
+const CodeMatrix = () => {
   const group = useRef();
-  useFrame((state) => {
-    group.current.rotation.y += 0.005;
-    group.current.children.forEach((b, i) => {
-      b.position.y += Math.sin(state.clock.elapsedTime + i) * 0.01;
+  useFrame(() => {
+    group.current.children.forEach((c) => {
+      c.position.y -= 0.2;
+      if (c.position.y < -20) c.position.y = 20;
     });
   });
   return (
     <group ref={group}>
-      {Array.from({ length: 15 }).map((_, i) => (
-        <mesh key={i} position={[(Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10]}>
-          <boxGeometry args={[0.2, 0.01, 0.2]} />
-          <meshStandardMaterial color="#8800ff" emissive="#8800ff" emissiveIntensity={2} />
+      {Array.from({ length: 100 }).map((_, i) => (
+        <mesh key={i} position={[(Math.random() - 0.5) * 30, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20]}>
+          <planeGeometry args={[0.1, 0.5]} />
+          <meshBasicMaterial color="#00ff00" transparent opacity={0.6} />
         </mesh>
       ))}
     </group>
+  );
+};
+
+const InteractiveCube = () => {
+  const cube = useRef();
+  useFrame((state) => {
+    cube.current.rotation.x = state.clock.elapsedTime * 0.5;
+    cube.current.rotation.y = state.clock.elapsedTime * 0.3;
+  });
+  return (
+    <mesh ref={cube}>
+      <boxGeometry args={[5, 5, 5]} />
+      <meshStandardMaterial color="#6c63ff" wireframe />
+    </mesh>
   );
 };
 
@@ -69,11 +74,11 @@ const HeroScene = () => {
   }, []);
 
   const config = {
-    spring_blossom: { bg: "#001a05", color: "#ffb7c5" },
-    water_garden: { bg: "#001a1a", color: "#00ffff" },
-    butterfly: { bg: "#05001a", color: "#8800ff" },
-    glass_forest: { bg: "#001000", color: "#00ff88" },
-    sakura_exp: { bg: "#000", color: "#ffb7c5" }
+    code_matrix: { bg: "#000", color: "#00ff00" },
+    data_stream: { bg: "#000", color: "#0066ff" },
+    luxury_dark: { bg: "#000", color: "#d4af37" },
+    fluid_wave: { bg: "#05051a", color: "#00d4ff" },
+    cube_nav: { bg: "#05001a", color: "#6c63ff" }
   }[theme] || { bg: "#050505", color: "#fff" };
 
   return (
@@ -82,32 +87,28 @@ const HeroScene = () => {
       <color attach="background" args={[config.bg]} />
       
       <Suspense fallback={null}>
-        <ParticleField count={1000} theme={theme} />
+        <ParticleField count={800} theme={theme} />
 
-        {/* --- Nature Collection (Themes 21-30) --- */}
-        {(theme === 'spring_blossom' || theme === 'sakura_exp') && <SakuraPetals count={theme === 'sakura_exp' ? 300 : 100} />}
-        {theme === 'butterfly' && <ButterflyField />}
-        {theme === 'water_garden' && (
-           <group position={[0, -5, 0]}>
-             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-               <planeGeometry args={[50, 50]} />
-               <MeshDistortMaterial color="#002222" speed={2} distort={0.2} metalness={1} roughness={0} />
-             </mesh>
-           </group>
+        {/* --- Tech & UI Collection (Themes 31-40) --- */}
+        {theme === 'code_matrix' && <CodeMatrix />}
+        {theme === 'data_stream' && <DataStream />}
+        {theme === 'cube_nav' && <InteractiveCube />}
+        {theme === 'fluid_wave' && (
+           <mesh rotation={[-Math.PI / 2, 0, 0]}>
+             <planeGeometry args={[50, 50, 32, 32]} />
+             <MeshDistortMaterial color="#001144" speed={3} distort={0.3} metalness={1} />
+           </mesh>
         )}
-        {theme === 'spring_sky' && (
-          <>
-            <Cloud opacity={0.8} speed={0.4} width={20} depth={2} segments={20} color="#fff" />
-            <Float speed={2}><mesh position={[0, 2, 0]}><coneGeometry args={[2, 4, 4]} /><meshStandardMaterial color="green" /></mesh></Float>
-          </>
+        {theme === 'luxury_dark' && (
+           <Float speed={2}><mesh><sphereGeometry args={[4, 64, 64]} /><meshStandardMaterial color="#111" metalness={1} roughness={0.1} emissive="#d4af37" emissiveIntensity={0.2} /></mesh></Float>
         )}
 
-        {/* --- Space & Tech Categories (Themes 1-20) --- */}
-        {theme === 'galaxy_core' && <Grid infiniteGrid fadeDistance={40} cellColor="#3300ff" />}
-        {theme === 'warp_speed' && <Sparkles count={500} scale={30} size={10} speed={4} />}
-        {theme === 'black_hole' && <Torus args={[4, 0.5, 16, 100]}><meshStandardMaterial color="#ff5e00" emissive="#ff5e00" emissiveIntensity={5} /></Torus>}
+        {/* --- Legacy Collections (Themes 1-30) --- */}
+        {theme === 'galaxy_core' && <Stars radius={100} depth={50} count={5000} factor={4} />}
+        {theme === 'spring_blossom' && <Sparkles count={100} scale={10} color="#ffb7c5" />}
+        {theme === 'cyber_grid' && <Grid infiniteGrid fadeDistance={40} cellColor="#00ffff" />}
 
-        <Environment preset="park" />
+        <Environment preset="city" />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color={config.color} />
       </Suspense>

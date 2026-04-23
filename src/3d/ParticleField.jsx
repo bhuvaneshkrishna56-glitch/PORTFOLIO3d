@@ -5,7 +5,7 @@ import * as THREE from 'three';
 const ParticleField = ({ count = 2000, theme = 'glass_universe' }) => {
   const points = useRef();
 
-  // Mapping for all 30 themes
+  // Mapping for all 40 themes
   const themeParticleColors = {
     cyber_grid: ['#00ffff', '#ff00ff'],
     glass_universe: ['#6c63ff', '#00d4ff'],
@@ -40,7 +40,19 @@ const ParticleField = ({ count = 2000, theme = 'glass_universe' }) => {
     spring_sky: ['#ffffff', '#00d4ff'],
     growing_ui: ['#00ff88', '#ff6b9d'],
     water_garden: ['#00ffff', '#ffffff'],
-    sakura_exp: ['#ffb7c5', '#ff1493']
+    sakura_exp: ['#ffb7c5', '#ff1493'],
+
+    // Tech & UI
+    data_stream: ['#0066ff', '#00ffff'],
+    layered_depth: ['#ffffff', '#666666'],
+    code_matrix: ['#00ff00', '#003300'],
+    grid_cards: ['#ff6b6b', '#ffffff'],
+    game_world: ['#6c63ff', '#00ff88'],
+    tech_lab: ['#00d4ff', '#ffffff'],
+    luxury_dark: ['#d4af37', '#000000'],
+    bento_3d: ['#ffffff', '#666666'],
+    fluid_wave: ['#00d4ff', '#0066ff'],
+    cube_nav: ['#6c63ff', '#ff00ff']
   };
 
   const selectedColors = themeParticleColors[theme] || themeParticleColors.glass_universe;
@@ -51,9 +63,9 @@ const ParticleField = ({ count = 2000, theme = 'glass_universe' }) => {
     const colorOptions = selectedColors.map(c => new THREE.Color(c));
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 45;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 45;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 45;
+      positions[i * 3] = (Math.random() - 0.5) * 50;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
 
       const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
       colorValues[i * 3] = color.r;
@@ -74,7 +86,7 @@ const ParticleField = ({ count = 2000, theme = 'glass_universe' }) => {
         <bufferAttribute attach="attributes-position" count={count} array={particles} itemSize={3} />
         <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial size={0.03} vertexColors transparent opacity={0.3} blending={THREE.AdditiveBlending} />
+      <pointsMaterial size={0.03} vertexColors transparent opacity={0.2} blending={THREE.AdditiveBlending} />
     </points>
   );
 };
