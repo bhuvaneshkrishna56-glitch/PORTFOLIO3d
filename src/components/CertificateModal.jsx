@@ -90,12 +90,24 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
                   loading="lazy"
                 />
               ) : fileCategory === 'pdf' ? (
-                <iframe
-                  src={certificate.file_url}
-                  title={certificate.title}
-                  className="w-full h-[70vh] rounded-lg bg-white"
-                  loading="lazy"
-                />
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-center">
+                    <a 
+                      href={certificate.file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="px-6 py-2 bg-accent-secondary/20 hover:bg-accent-secondary/30 text-accent-secondary text-xs font-bold rounded-full border border-accent-secondary/30 transition-all"
+                    >
+                      Open Full PDF View
+                    </a>
+                  </div>
+                  <iframe
+                    src={certificate.file_url}
+                    title={certificate.title}
+                    className="w-full h-[70vh] rounded-lg bg-white shadow-2xl"
+                    loading="lazy"
+                  />
+                </div>
               ) : (
                 <div className="flex items-center justify-center h-64 text-text-muted">
                   <p>Preview not available for this file type</p>

@@ -41,8 +41,9 @@ export const truncateText = (text, maxLength = 100) => {
  */
 export const getFileCategory = (mimeType) => {
   if (!mimeType) return 'unknown';
-  if (mimeType.startsWith('image/')) return 'image';
-  if (mimeType === 'application/pdf') return 'pdf';
+  const type = mimeType.toLowerCase();
+  if (type.startsWith('image/')) return 'image';
+  if (type.includes('pdf')) return 'pdf';
   return 'unknown';
 };
 
