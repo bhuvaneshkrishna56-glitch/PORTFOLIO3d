@@ -182,58 +182,70 @@ const Dashboard = () => {
                         
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                            {[
-                              { id: 'cyber_grid', name: 'Cyberpunk', desc: 'Neon city', bg: 'bg-black border border-cyan-500' },
-                              { id: 'glass_universe', name: 'Glass', desc: 'Floating glass', bg: 'bg-indigo-900' },
-                              { id: 'neural_net', name: 'Neural', desc: 'AI nodes', bg: 'bg-slate-900' },
-                              { id: 'space_orbit', name: 'Orbit', desc: 'Planets', bg: 'bg-black' },
-                              { id: 'block_stack', name: 'Blocks', desc: '3D blocks', bg: 'bg-orange-600' },
-                              { id: 'hologram', name: 'Hologram', desc: 'Sci-fi UI', bg: 'bg-black' },
-                              { id: 'tunnel', name: 'Tunnel', desc: 'Infinite', bg: 'bg-blue-950' },
-                              { id: 'liquid_metal', name: 'Liquid', desc: 'Reflections', bg: 'bg-slate-300' },
-                              { id: 'electric', name: 'Electric', desc: 'Energy', bg: 'bg-violet-900' },
-                              { id: 'helix', name: 'DNA', desc: 'Genetic', bg: 'bg-green-900' },
+                              { id: 'cyber_grid', name: 'Cyber', bg: 'bg-black' },
+                              { id: 'glass_universe', name: 'Glass', bg: 'bg-indigo-900' },
+                              { id: 'neural_net', name: 'Neural', bg: 'bg-slate-900' },
+                              { id: 'space_orbit', name: 'Orbit', bg: 'bg-black' },
+                              { id: 'block_stack', name: 'Blocks', bg: 'bg-orange-600' },
+                              { id: 'hologram', name: 'Holo', bg: 'bg-black' },
+                              { id: 'tunnel', name: 'Tunnel', bg: 'bg-blue-950' },
+                              { id: 'liquid_metal', name: 'Liquid', bg: 'bg-slate-300' },
+                              { id: 'electric', name: 'Electric', bg: 'bg-violet-900' },
+                              { id: 'helix', name: 'DNA', bg: 'bg-green-900' },
                               
                               // Space
-                              { id: 'galaxy_core', name: 'Galaxy', desc: 'Spiral', bg: 'bg-blue-900' },
-                              { id: 'warp_speed', name: 'Warp', desc: 'Hyper', bg: 'bg-zinc-900' },
-                              { id: 'black_hole', name: 'B-Hole', desc: 'L-Bending', bg: 'bg-black' },
-                              { id: 'nebula', name: 'Nebula', desc: 'Fog', bg: 'bg-indigo-900' },
-                              { id: 'solar_system', name: 'Solar', desc: 'System', bg: 'bg-black' },
-                              { id: 'planet_surface', name: 'Planet', desc: 'Surface', bg: 'bg-orange-900' },
-                              { id: 'space_station', name: 'Station', desc: 'Hub', bg: 'bg-slate-800' },
-                              { id: 'constellation', name: 'Constell', desc: 'Lines', bg: 'bg-black' },
-                              { id: 'telescope', name: 'Lens', desc: 'Scope', bg: 'bg-zinc-950' },
-                              { id: 'portal', name: 'Portal', desc: 'Gate', bg: 'bg-cyan-900' },
+                              { id: 'galaxy_core', name: 'Galaxy', bg: 'bg-blue-900' },
+                              { id: 'warp_speed', name: 'Warp', bg: 'bg-zinc-900' },
+                              { id: 'black_hole', name: 'B-Hole', bg: 'bg-black' },
+                              { id: 'nebula', name: 'Nebula', bg: 'bg-indigo-900' },
+                              { id: 'solar_system', name: 'Solar', bg: 'bg-black' },
+                              { id: 'planet_surface', name: 'Planet', bg: 'bg-orange-900' },
+                              { id: 'space_station', name: 'Station', bg: 'bg-slate-800' },
+                              { id: 'constellation', name: 'Const', bg: 'bg-black' },
+                              { id: 'telescope', name: 'Lens', bg: 'bg-zinc-950' },
+                              { id: 'portal', name: 'Portal', bg: 'bg-cyan-900' },
 
                               // Nature
-                              { id: 'spring_blossom', name: 'Blossom', desc: 'Sakura', bg: 'bg-green-900' },
-                              { id: 'flower_field', name: 'Field', desc: 'Blooms', bg: 'bg-pink-900' },
-                              { id: 'breeze_leaves', name: 'Breeze', desc: 'Leaves', bg: 'bg-emerald-900' },
-                              { id: 'bloom_interact', name: 'Bloom', desc: 'Growth', bg: 'bg-black' },
-                              { id: 'glass_forest', name: 'Forest', desc: 'Nature', bg: 'bg-green-950' },
-                              { id: 'butterfly', name: 'Fly', desc: 'Motion', bg: 'bg-indigo-950' },
-                              { id: 'spring_sky', name: 'Sky', desc: 'Islands', bg: 'bg-sky-900' },
-                              { id: 'growing_ui', name: 'Grow', desc: 'Organic', bg: 'bg-green-800' },
-                              { id: 'water_garden', name: 'Water', desc: 'Mirror', bg: 'bg-cyan-950' },
-                              { id: 'sakura_exp', name: 'Sakura', desc: 'Burst', bg: 'bg-pink-600' },
+                              { id: 'spring_blossom', name: 'Blossom', bg: 'bg-green-900' },
+                              { id: 'flower_field', name: 'Field', bg: 'bg-pink-900' },
+                              { id: 'breeze_leaves', name: 'Breeze', bg: 'bg-emerald-900' },
+                              { id: 'bloom_interact', name: 'Bloom', bg: 'bg-black' },
+                              { id: 'glass_forest', name: 'Forest', bg: 'bg-green-950' },
+                              { id: 'butterfly', name: 'Fly', bg: 'bg-indigo-950' },
+                              { id: 'spring_sky', name: 'Sky', bg: 'bg-sky-900' },
+                              { id: 'growing_ui', name: 'Grow', bg: 'bg-green-800' },
+                              { id: 'water_garden', name: 'Water', bg: 'bg-cyan-950' },
+                              { id: 'sakura_exp', name: 'Sakura', bg: 'bg-pink-600' },
 
-                              // Tech & UI (New)
-                              { id: 'data_stream', name: 'Data', desc: 'Streams', bg: 'bg-blue-600' },
-                              { id: 'layered_depth', name: 'Layers', desc: 'Z-Axis', bg: 'bg-slate-700' },
-                              { id: 'code_matrix', name: 'Matrix', desc: 'Hacker', bg: 'bg-black border border-green-500' },
-                              { id: 'grid_cards', name: 'Cards', desc: '3D Grid', bg: 'bg-orange-500' },
-                              { id: 'game_world', name: 'Game', desc: 'RPG Hub', bg: 'bg-indigo-600' },
-                              { id: 'tech_lab', name: 'Lab', desc: 'Exp UI', bg: 'bg-zinc-800' },
-                              { id: 'luxury_dark', name: 'Luxury', desc: 'Gold/Dark', bg: 'bg-black ring-1 ring-yellow-600' },
-                              { id: 'bento_3d', name: 'Bento', desc: 'Depth', bg: 'bg-slate-200' },
-                              { id: 'fluid_wave', name: 'Wave', desc: 'Organic', bg: 'bg-blue-400' },
-                              { id: 'cube_nav', name: 'Cube', desc: 'Interact', bg: 'bg-violet-600' }
+                              // Tech & UI
+                              { id: 'data_stream', name: 'Data', bg: 'bg-blue-600' },
+                              { id: 'layered_depth', name: 'Layers', bg: 'bg-slate-700' },
+                              { id: 'code_matrix', name: 'Matrix', bg: 'bg-black border border-green-500' },
+                              { id: 'grid_cards', name: 'Cards', bg: 'bg-orange-500' },
+                              { id: 'game_world', name: 'Game', bg: 'bg-indigo-600' },
+                              { id: 'tech_lab', name: 'Lab', bg: 'bg-zinc-800' },
+                              { id: 'luxury_dark', name: 'Luxury', bg: 'bg-black ring-1 ring-yellow-600' },
+                              { id: 'bento_3d', name: 'Bento', bg: 'bg-slate-200' },
+                              { id: 'fluid_wave', name: 'Wave', bg: 'bg-blue-400' },
+                              { id: 'cube_nav', name: 'Cube', bg: 'bg-violet-600' },
+
+                              // Storytelling (Final 10)
+                              { id: 'museum_walk', name: 'Museum', bg: 'bg-stone-800' },
+                              { id: 'roadmap_3d', name: 'Journey', bg: 'bg-yellow-900' },
+                              { id: 'mini_city', name: 'City', bg: 'bg-blue-500' },
+                              { id: 'stage_spot', name: 'Stage', bg: 'bg-black ring-1 ring-white/20' },
+                              { id: 'puzzle_ui', name: 'Puzzle', bg: 'bg-red-900' },
+                              { id: 'book_flip', name: 'Book', bg: 'bg-amber-900' },
+                              { id: 'brain_idea', name: 'Brain', bg: 'bg-purple-900' },
+                              { id: 'construction', name: 'Build', bg: 'bg-orange-800' },
+                              { id: 'ice_crystal', name: 'Ice', bg: 'bg-cyan-100 shadow-lg' },
+                              { id: 'fire_ember', name: 'Fire', bg: 'bg-red-950 shadow-inner' }
                            ].map(t => (
                               <motion.div 
                                 key={t.id}
                                 whileHover={{ scale: 1.1, zIndex: 10 }}
-                                className={`glass-morphism p-3 rounded-[1.5rem] border-2 transition-all cursor-pointer ${
-                                   activeTheme === t.id ? 'border-accent-primary shadow-lg shadow-accent-primary/20' : 'border-white/5 opacity-70 hover:opacity-100'
+                                className={`glass-morphism p-2 rounded-[1rem] border transition-all cursor-pointer ${
+                                   activeTheme === t.id ? 'border-accent-primary ring-1 ring-accent-primary/50' : 'border-white/5 opacity-80'
                                 }`}
                                 onClick={async () => {
                                    setActiveTheme(t.id);
@@ -242,11 +254,10 @@ const Dashboard = () => {
                                    else alert(`${t.name} Activated!`);
                                 }}
                               >
-                                 <div className={`w-full h-12 rounded-lg mb-2 ${t.bg} flex items-center justify-center text-[6px] font-black uppercase text-white overflow-hidden`}>
+                                 <div className={`w-full h-8 rounded mb-1.5 ${t.bg} flex items-center justify-center text-[5px] font-black uppercase text-white overflow-hidden`}>
                                     {t.id.replace('_', ' ')}
                                  </div>
-                                 <h4 className="font-bold text-[9px] mb-0.5 truncate">{t.name}</h4>
-                                 <p className="text-[8px] text-text-muted truncate leading-tight">{t.desc}</p>
+                                 <h4 className="font-bold text-[8px] truncate">{t.name}</h4>
                               </motion.div>
                            ))}
                         </div>

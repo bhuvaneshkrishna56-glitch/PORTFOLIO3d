@@ -1,64 +1,63 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Box, Center, MeshWobbleMaterial } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Box, Torus, MeshRefractionMaterial, MeshWobbleMaterial } from '@react-three/drei';
 import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { fetchProfile } from '../services/profileService';
 import ParticleField from './ParticleField';
 import FloatingShapes from './FloatingShapes';
 
-// --- Specialized Tech & UI Components ---
+// --- Specialized Storytelling Components ---
 
-const DataStream = () => {
+const MiniCity = () => {
+  const group = useRef();
+  const buildings = useMemo(() => Array.from({ length: 40 }).map(() => ({
+    pos: [(Math.random() - 0.5) * 15, 0, (Math.random() - 0.5) * 15],
+    scale: [1, Math.random() * 5 + 2, 1],
+    color: new THREE.Color().setHSL(Math.random(), 0.5, 0.5)
+  })), []);
+
+  return (
+    <group ref={group} position={[0, -5, 0]}>
+      {buildings.map((b, i) => (
+        <mesh key={i} position={b.pos} scale={b.scale}>
+          <boxGeometry />
+          <meshStandardMaterial color={b.color} metalness={0.8} roughness={0.2} />
+        </mesh>
+      ))}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]}>
+        <planeGeometry args={[30, 30]} />
+        <meshStandardMaterial color="#111" />
+      </mesh>
+    </group>
+  );
+};
+
+const BrainNetwork = () => {
   const group = useRef();
   useFrame((state) => {
-    group.current.children.forEach((c, i) => {
-      c.position.y -= 0.1;
-      if (c.position.y < -15) c.position.y = 15;
-    });
+    group.current.rotation.y += 0.002;
   });
   return (
     <group ref={group}>
-      {Array.from({ length: 50 }).map((_, i) => (
-        <mesh key={i} position={[(Math.random() - 0.5) * 20, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 10]}>
-          <boxGeometry args={[0.02, 2, 0.02]} />
-          <meshBasicMaterial color="#0066ff" transparent opacity={0.5} />
+      <Sparkles count={200} scale={10} size={4} color="#a855f7" />
+      {Array.from({ length: 20 }).map((_, i) => (
+        <mesh key={i} position={[(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8]}>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshBasicMaterial color="#a855f7" />
         </mesh>
       ))}
     </group>
   );
 };
 
-const CodeMatrix = () => {
-  const group = useRef();
-  useFrame(() => {
-    group.current.children.forEach((c) => {
-      c.position.y -= 0.2;
-      if (c.position.y < -20) c.position.y = 20;
-    });
-  });
+const IceCrystal = () => {
   return (
-    <group ref={group}>
-      {Array.from({ length: 100 }).map((_, i) => (
-        <mesh key={i} position={[(Math.random() - 0.5) * 30, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20]}>
-          <planeGeometry args={[0.1, 0.5]} />
-          <meshBasicMaterial color="#00ff00" transparent opacity={0.6} />
-        </mesh>
-      ))}
-    </group>
-  );
-};
-
-const InteractiveCube = () => {
-  const cube = useRef();
-  useFrame((state) => {
-    cube.current.rotation.x = state.clock.elapsedTime * 0.5;
-    cube.current.rotation.y = state.clock.elapsedTime * 0.3;
-  });
-  return (
-    <mesh ref={cube}>
-      <boxGeometry args={[5, 5, 5]} />
-      <meshStandardMaterial color="#6c63ff" wireframe />
-    </mesh>
+    <Float speed={5} rotationIntensity={2}>
+      <mesh>
+        <icosahedronGeometry args={[4, 0]} />
+        <MeshWobbleMaterial color="#00ffff" factor={0.2} speed={1} transparent opacity={0.7} metalness={1} roughness={0} />
+      </mesh>
+    </Float>
   );
 };
 
@@ -74,11 +73,11 @@ const HeroScene = () => {
   }, []);
 
   const config = {
-    code_matrix: { bg: "#000", color: "#00ff00" },
-    data_stream: { bg: "#000", color: "#0066ff" },
-    luxury_dark: { bg: "#000", color: "#d4af37" },
-    fluid_wave: { bg: "#05051a", color: "#00d4ff" },
-    cube_nav: { bg: "#05001a", color: "#6c63ff" }
+    mini_city: { bg: "#001", color: "#3b82f6" },
+    brain_idea: { bg: "#05001a", color: "#a855f7" },
+    ice_crystal: { bg: "#001a1a", color: "#00ffff" },
+    fire_ember: { bg: "#1a0500", color: "#ef4444" },
+    museum_walk: { bg: "#111", color: "#fff" }
   }[theme] || { bg: "#050505", color: "#fff" };
 
   return (
@@ -87,26 +86,25 @@ const HeroScene = () => {
       <color attach="background" args={[config.bg]} />
       
       <Suspense fallback={null}>
-        <ParticleField count={800} theme={theme} />
+        <ParticleField count={600} theme={theme} />
 
-        {/* --- Tech & UI Collection (Themes 31-40) --- */}
-        {theme === 'code_matrix' && <CodeMatrix />}
-        {theme === 'data_stream' && <DataStream />}
-        {theme === 'cube_nav' && <InteractiveCube />}
-        {theme === 'fluid_wave' && (
-           <mesh rotation={[-Math.PI / 2, 0, 0]}>
-             <planeGeometry args={[50, 50, 32, 32]} />
-             <MeshDistortMaterial color="#001144" speed={3} distort={0.3} metalness={1} />
-           </mesh>
-        )}
-        {theme === 'luxury_dark' && (
-           <Float speed={2}><mesh><sphereGeometry args={[4, 64, 64]} /><meshStandardMaterial color="#111" metalness={1} roughness={0.1} emissive="#d4af37" emissiveIntensity={0.2} /></mesh></Float>
+        {/* --- Storytelling Collection (Themes 41-50) --- */}
+        {theme === 'mini_city' && <MiniCity />}
+        {theme === 'brain_idea' && <BrainNetwork />}
+        {theme === 'ice_crystal' && <IceCrystal />}
+        {theme === 'fire_ember' && <Sparkles count={400} scale={15} size={6} speed={3} color="#ff4400" />}
+        {theme === 'museum_walk' && (
+           <group>
+             <mesh position={[-8, 0, -5]} rotation={[0, 0.5, 0]}><planeGeometry args={[6, 8]} /><meshStandardMaterial color="#222" /></mesh>
+             <mesh position={[8, 0, -5]} rotation={[0, -0.5, 0]}><planeGeometry args={[6, 8]} /><meshStandardMaterial color="#222" /></mesh>
+             <mesh position={[0, 0, -10]}><planeGeometry args={[10, 8]} /><meshStandardMaterial color="#333" /></mesh>
+           </group>
         )}
 
-        {/* --- Legacy Collections (Themes 1-30) --- */}
+        {/* --- Legacy Engine (Themes 1-40) --- */}
         {theme === 'galaxy_core' && <Stars radius={100} depth={50} count={5000} factor={4} />}
         {theme === 'spring_blossom' && <Sparkles count={100} scale={10} color="#ffb7c5" />}
-        {theme === 'cyber_grid' && <Grid infiniteGrid fadeDistance={40} cellColor="#00ffff" />}
+        {theme === 'code_matrix' && <Grid infiniteGrid fadeDistance={40} cellColor="#00ff00" />}
 
         <Environment preset="city" />
         <ambientLight intensity={0.5} />
