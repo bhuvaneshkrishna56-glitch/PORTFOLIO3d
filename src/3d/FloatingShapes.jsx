@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { MeshDistortMaterial, Float, MeshWobbleMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
-const Shape = ({ position, color, type, speed = 1, distort = 0.4 }) => {
+const Shape = ({ position, color, type, speed = 1, distort = 0.4, theme }) => {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
 
@@ -12,11 +12,37 @@ const Shape = ({ position, color, type, speed = 1, distort = 0.4 }) => {
     if (meshRef.current) {
       meshRef.current.rotation.x = Math.cos(time / 4) * 0.2;
       meshRef.current.rotation.y = Math.sin(time / 4) * 0.2;
-      
-      // Gentle floating up and down
       meshRef.current.position.y += Math.sin(time * speed) * 0.002;
     }
   });
+
+  const getMaterial = () => {
+    if (theme === 'cyber') {
+      return (
+        <meshStandardMaterial
+          color={color}
+          wireframe
+          emissive={color}
+          emissiveIntensity={2}
+        />
+      );
+    }
+    if (theme === 'abstract') {
+      return <MeshWobbleMaterial color={color} speed={speed * 2} factor={0.6} roughness={0} />;
+    }
+    return (
+      <MeshDistortMaterial
+        color={color}
+        speed={speed * 1.5}
+        distort={distort}
+        radius={1}
+        roughness={0.1}
+        metalness={0.8}
+        transparent
+        opacity={0.7}
+      />
+    );
+  };
 
   return (
     <Float speed={speed * 2} rotationIntensity={1.5} floatIntensity={2}>
@@ -30,34 +56,33 @@ const Shape = ({ position, color, type, speed = 1, distort = 0.4 }) => {
         {type === 'sphere' && <sphereGeometry args={[1, 64, 64]} />}
         {type === 'torus' && <torusGeometry args={[0.7, 0.3, 32, 100]} />}
         {type === 'box' && <boxGeometry args={[1.2, 1.2, 1.2]} />}
-        
-        <MeshDistortMaterial
-          color={color}
-          speed={speed * 1.5}
-          distort={distort}
-          radius={1}
-          roughness={0.1}
-          metalness={0.8}
-          transparent
-          opacity={0.7}
-          envMapIntensity={2}
-        />
+        {getMaterial()}
       </mesh>
     </Float>
   );
 };
 
-const FloatingShapes = () => {
+const FloatingShapes = ({ theme = 'cosmic' }) => {
+  // Theme-specific colors
+  const themeColors = {
+    cosmic: ['#6c63ff', '#00d4ff', '#ff6b9d'],
+    cyber: ['#00ff00', '#00ffff', '#ffff00'],
+    voxel: ['#ff4d4d', '#ff944d', '#ffd11a'],
+    abstract: ['#e0e0e0', '#ffffff', '#a0a0a0'],
+    luxury: ['#d4af37', '#ffffff', '#ffd700']
+  };
+
+  const colors = themeColors[theme] || themeColors.cosmic;
+
   return (
     <group>
-      {/* Primary Hero Shapes */}
-      <Shape position={[-4, 2, -5]} color="#6c63ff" type="sphere" speed={1} distort={0.5} />
-      <Shape position={[4, -1, -4]} color="#00d4ff" type="torus" speed={1.2} distort={0.3} />
-      <Shape position={[-2, -3, -6]} color="#ff6b9d" type="box" speed={0.8} distort={0.2} />
+      <Shape position={[-4, 2, -5]} color={colors[0]} type="sphere" theme={theme} />
+      <Shape position={[4, -1, -4]} color={colors[1]} type="torus" theme={theme} />
+      <Shape position={[-2, -3, -6]} color={colors[2]} type={theme === 'voxel' ? 'box' : 'box'} theme={theme} />
       
       {/* Background Subtle Shapes */}
-      <Shape position={[6, 4, -10]} color="#6c63ff" type="sphere" speed={0.5} distort={0.4} />
-      <Shape position={[-7, -2, -8]} color="#00d4ff" type="torus" speed={0.4} distort={0.2} />
+      <Shape position={[6, 4, -10]} color={colors[0]} type="sphere" speed={0.5} theme={theme} />
+      <Shape position={[-7, -2, -8]} color={colors[1]} type="torus" speed={0.4} theme={theme} />
     </group>
   );
 };

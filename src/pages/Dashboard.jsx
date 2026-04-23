@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { logoutAdmin } from '../services/authService';
 import { fetchProjects } from '../services/projectService';
 import { fetchCertificates } from '../services/certificateService';
-import { updateResume, deleteResume } from '../services/profileService';
+import { updateResume, deleteResume, updateProfileTheme, fetchProfile } from '../services/profileService';
 import { fetchSkills, addSkill, deleteSkill } from '../services/skillService';
 import { 
   fetchExperiences, addExperience, deleteExperience,
@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [learnings, setLearnings] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTheme, setActiveTheme] = useState('cosmic');
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showCertForm, setShowCertForm] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
@@ -56,6 +57,10 @@ const Dashboard = () => {
     setExperiences(expRes.experiences || []);
     setLearnings(learnRes.learnings || []);
     setServices(servRes.services || []);
+    
+    const profRes = await fetchProfile();
+    if (profRes.profile?.active_theme) setActiveTheme(profRes.profile.active_theme);
+    
     setLoading(false);
   }, []);
 
@@ -95,6 +100,7 @@ const Dashboard = () => {
             { id: 'projects', label: 'Projects', icon: <FiGrid /> },
             { id: 'certificates', label: 'Certificates', icon: <FiAward /> },
             { id: 'skills', label: 'Tech Stack', icon: <FiCpu /> },
+            { id: 'themes', label: '3D Themes', icon: <FiLayout /> },
             { id: 'journey', label: 'Journey', icon: <FiAward /> },
             { id: 'cms', label: 'Learnings & Services', icon: <FiLayout /> },
             { id: 'profile', label: 'Profile', icon: <FiUser /> }
@@ -167,6 +173,50 @@ const Dashboard = () => {
                  {activeTab === 'certificates' && (
                     <CertificateList certificates={certificates} onCertificateDeleted={loadAllData} />
                  )}
+                  {activeTab === 'themes' && (
+                     <div className="space-y-8">
+                        <div className="text-center space-y-2 mb-10">
+                           <h3 className="text-2xl font-bold">Design Studio</h3>
+                           <p className="text-text-muted text-sm">Choose the 3D soul of your portfolio</p>
+                        </div>
+                        
+                        <div className="flex flex-wrap justify-center gap-8">
+                           {[
+                              { id: 'cosmic', name: 'Cosmic Glass', desc: 'Deep purple & glass aesthetics', bg: 'bg-gradient-to-br from-indigo-600 to-cyan-400' },
+                              { id: 'cyber', name: 'Cyber Grid', desc: 'High-contrast neon wireframes', bg: 'bg-black border border-green-500' },
+                              { id: 'voxel', name: 'Voxel Flow', desc: 'Dynamic algorithmic cubes', bg: 'bg-gradient-to-br from-orange-600 to-red-500' },
+                              { id: 'abstract', name: 'Abstract Waves', desc: 'Minimal silver fluid motion', bg: 'bg-gradient-to-br from-slate-400 to-slate-200' },
+                              { id: 'luxury', name: 'Luxury Gold', desc: 'Golden spheres & black elegance', bg: 'bg-gradient-to-br from-yellow-600 to-amber-900' }
+                           ].map(t => (
+                              <motion.div 
+                                key={t.id}
+                                whileHover={{ y: -10 }}
+                                className={`w-full md:w-64 glass-morphism p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer ${
+                                   activeTheme === t.id ? 'border-accent-primary' : 'border-white/5 opacity-60 grayscale hover:grayscale-0'
+                                }`}
+                                onClick={async () => {
+                                   setActiveTheme(t.id);
+                                   const res = await updateProfileTheme(t.id);
+                                   if (res.error) alert(res.error);
+                                   else alert(`${t.name} Applied!`);
+                                }}
+                              >
+                                 <div className={`w-full h-32 rounded-2xl mb-6 ${t.bg} flex items-center justify-center text-xs font-black uppercase`}>
+                                    Preview
+                                 </div>
+                                 <h4 className="font-bold mb-1">{t.name}</h4>
+                                 <p className="text-xs text-text-muted">{t.desc}</p>
+                                 {activeTheme === t.id && (
+                                    <div className="mt-4 py-1 px-3 bg-accent-primary text-[10px] font-black uppercase rounded-full inline-block">
+                                       Active Now
+                                    </div>
+                                 )}
+                              </motion.div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
+
                   {activeTab === 'journey' && (
                      <div className="space-y-8">
                         <div className="glass-morphism p-8 rounded-[2.5rem] border-accent-primary/20">

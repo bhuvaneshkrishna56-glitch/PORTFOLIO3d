@@ -5,7 +5,6 @@ import { supabase } from '../supabase/supabase';
  */
 export const fetchProfile = async () => {
   try {
-    // Get the first available profile
     const { data, error } = await supabase
       .from('profile')
       .select('*')
@@ -23,7 +22,6 @@ export const fetchProfile = async () => {
  */
 export const updateResume = async (file) => {
   try {
-    // 1. Upload to Storage
     const fileName = `resume_${Date.now()}.pdf`;
     const filePath = `resumes/${fileName}`;
 
@@ -33,13 +31,10 @@ export const updateResume = async (file) => {
 
     if (uploadError) throw uploadError;
 
-    // 2. Get Public URL
     const { data: { publicUrl } } = supabase.storage
       .from('portfolio-assets')
       .getPublicUrl(filePath);
 
-    // 3. Update ANY profile row present
-    // First, verify if any row exists
     const { data: existing } = await supabase.from('profile').select('id');
     
     if (existing && existing.length > 0) {
@@ -52,15 +47,35 @@ export const updateResume = async (file) => {
         if (error) throw error;
         return { profile: data[0], error: null };
     } else {
-        // Create if missing
         const { data, error } = await supabase
           .from('profile')
-          .insert([{ full_name: 'Ebinesar A', resume_url: publicUrl }])
+          .insert([{ full_name: 'Ebinesar A', resume_url: publicUrl, active_theme: 'cosmic' }])
           .select();
           
         if (error) throw error;
         return { profile: data[0], error: null };
     }
+  } catch (error) {
+    return { profile: null, error: error.message };
+  }
+};
+
+/**
+ * Update the active 3D theme
+ */
+export const updateProfileTheme = async (themeName) => {
+  try {
+    const { data: existing } = await supabase.from('profile').select('id');
+    if (existing && existing.length > 0) {
+        const { data, error } = await supabase
+          .from('profile')
+          .update({ active_theme: themeName, updated_at: new Date().toISOString() })
+          .eq('id', existing[0].id)
+          .select();
+        if (error) throw error;
+        return { profile: data[0], error: null };
+    }
+    return { profile: null, error: 'No profile found' };
   } catch (error) {
     return { profile: null, error: error.message };
   }
