@@ -180,37 +180,37 @@ const Dashboard = () => {
                            <p className="text-text-muted text-sm">Choose the 3D soul of your portfolio</p>
                         </div>
                         
-                        <div className="flex flex-wrap justify-center gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                            {[
-                              { id: 'cosmic', name: 'Cosmic Glass', desc: 'Deep purple & glass aesthetics', bg: 'bg-gradient-to-br from-indigo-600 to-cyan-400' },
-                              { id: 'cyber', name: 'Cyber Grid', desc: 'High-contrast neon wireframes', bg: 'bg-black border border-green-500' },
-                              { id: 'voxel', name: 'Voxel Flow', desc: 'Dynamic algorithmic cubes', bg: 'bg-gradient-to-br from-orange-600 to-red-500' },
-                              { id: 'abstract', name: 'Abstract Waves', desc: 'Minimal silver fluid motion', bg: 'bg-gradient-to-br from-slate-400 to-slate-200' },
-                              { id: 'luxury', name: 'Luxury Gold', desc: 'Golden spheres & black elegance', bg: 'bg-gradient-to-br from-yellow-600 to-amber-900' }
+                              { id: 'cyber_grid', name: 'Cyberpunk Grid', desc: 'Glowing neon city floor', bg: 'bg-black border-2 border-cyan-500' },
+                              { id: 'glass_universe', name: 'Glass Universe', desc: 'Floating transparent spheres', bg: 'bg-gradient-to-br from-indigo-900 to-purple-600' },
+                              { id: 'neural_net', name: 'Neural Network', desc: 'Pulsing AI data nodes', bg: 'bg-slate-900 border border-blue-400' },
+                              { id: 'space_orbit', name: 'Space Orbit', desc: 'Planetary rotation & stars', bg: 'bg-[#050505] shadow-[inset_0_0_20px_white/10]' },
+                              { id: 'block_stack', name: 'Block Stack', desc: '3D layered block interface', bg: 'bg-orange-600' },
+                              { id: 'hologram', name: 'Holographic', desc: 'Sci-fi scanline interface', bg: 'bg-black border border-blue-300 opacity-80' },
+                              { id: 'tunnel', name: 'Infinite Tunnel', desc: 'Moving depth illusion', bg: 'bg-gradient-to-t from-black via-blue-900 to-black' },
+                              { id: 'liquid_metal', name: 'Liquid Metal', desc: 'Reflective morphing blobs', bg: 'bg-slate-300 shadow-xl' },
+                              { id: 'electric', name: 'Electric Energy', desc: 'Sparking current flow', bg: 'bg-violet-900 shadow-[0_0_15px_violet]' },
+                              { id: 'helix', name: 'DNA Helix', desc: 'Rotating genetic structure', bg: 'bg-green-900' }
                            ].map(t => (
                               <motion.div 
                                 key={t.id}
                                 whileHover={{ y: -10 }}
-                                className={`w-full md:w-64 glass-morphism p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer ${
-                                   activeTheme === t.id ? 'border-accent-primary' : 'border-white/5 opacity-60 grayscale hover:grayscale-0'
+                                className={`glass-morphism p-5 rounded-[2.5rem] border-2 transition-all cursor-pointer ${
+                                   activeTheme === t.id ? 'border-accent-primary ring-4 ring-accent-primary/20' : 'border-white/5 opacity-60 grayscale hover:grayscale-0'
                                 }`}
                                 onClick={async () => {
                                    setActiveTheme(t.id);
                                    const res = await updateProfileTheme(t.id);
                                    if (res.error) alert(res.error);
-                                   else alert(`${t.name} Applied!`);
+                                   else alert(`${t.name} Mode Activated!`);
                                 }}
                               >
-                                 <div className={`w-full h-32 rounded-2xl mb-6 ${t.bg} flex items-center justify-center text-xs font-black uppercase`}>
+                                 <div className={`w-full h-24 rounded-2xl mb-4 ${t.bg} flex items-center justify-center text-[10px] font-black uppercase text-white`}>
                                     Preview
                                  </div>
-                                 <h4 className="font-bold mb-1">{t.name}</h4>
-                                 <p className="text-xs text-text-muted">{t.desc}</p>
-                                 {activeTheme === t.id && (
-                                    <div className="mt-4 py-1 px-3 bg-accent-primary text-[10px] font-black uppercase rounded-full inline-block">
-                                       Active Now
-                                    </div>
-                                 )}
+                                 <h4 className="font-bold text-sm mb-1">{t.name}</h4>
+                                 <p className="text-[10px] text-text-muted leading-tight">{t.desc}</p>
                               </motion.div>
                            ))}
                         </div>
