@@ -8,6 +8,11 @@ import { fetchProjects } from '../services/projectService';
 import { fetchCertificates } from '../services/certificateService';
 import { updateResume, deleteResume } from '../services/profileService';
 import { fetchSkills, addSkill, deleteSkill } from '../services/skillService';
+import { 
+  fetchExperiences, addExperience, deleteExperience,
+  fetchLearnings, addLearning, deleteLearning,
+  fetchServices, addService, deleteService 
+} from '../services/cmsService';
 import ProjectForm from '../components/ProjectForm';
 import CertificateForm from '../components/CertificateForm';
 import ProjectList from '../components/ProjectList';
@@ -21,6 +26,9 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [learnings, setLearnings] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showCertForm, setShowCertForm] = useState(false);
@@ -33,15 +41,21 @@ const Dashboard = () => {
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
-    const [projRes, certRes, skillRes] = await Promise.all([
+    const [projRes, certRes, skillRes, expRes, learnRes, servRes] = await Promise.all([
       fetchProjects(),
       fetchCertificates(),
-      fetchSkills()
+      fetchSkills(),
+      fetchExperiences(),
+      fetchLearnings(),
+      fetchServices()
     ]);
     
     setProjects(projRes.projects || []);
     setCertificates(certRes.certificates || []);
     setSkills(skillRes.skills || []);
+    setExperiences(expRes.experiences || []);
+    setLearnings(learnRes.learnings || []);
+    setServices(servRes.services || []);
     setLoading(false);
   }, []);
 
@@ -81,6 +95,8 @@ const Dashboard = () => {
             { id: 'projects', label: 'Projects', icon: <FiGrid /> },
             { id: 'certificates', label: 'Certificates', icon: <FiAward /> },
             { id: 'skills', label: 'Tech Stack', icon: <FiCpu /> },
+            { id: 'journey', label: 'Journey', icon: <FiAward /> },
+            { id: 'cms', label: 'Learnings & Services', icon: <FiLayout /> },
             { id: 'profile', label: 'Profile', icon: <FiUser /> }
           ].map(tab => (
             <button 
@@ -151,6 +167,99 @@ const Dashboard = () => {
                  {activeTab === 'certificates' && (
                     <CertificateList certificates={certificates} onCertificateDeleted={loadAllData} />
                  )}
+                  {activeTab === 'journey' && (
+                     <div className="space-y-8">
+                        <div className="glass-morphism p-8 rounded-[2.5rem] border-accent-primary/20">
+                           <h3 className="text-xl font-bold mb-6">Add New Experience / Achievement</h3>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <input id="exp-duration" placeholder="Duration (e.g., Jan 2024 - Present)" className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm" />
+                              <input id="exp-company" placeholder="Company/Organization" className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm" />
+                              <input id="exp-role" placeholder="Role (e.g., Full Stack Intern)" className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm col-span-2" />
+                              <textarea id="exp-desc" placeholder="Brief Description" className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm col-span-2 h-24" />
+                              <input id="exp-achievements" placeholder="Achievements (comma separated)" className="bg-dark-700 border border-glass-border p-3 rounded-xl text-sm col-span-2" />
+                           </div>
+                           <button 
+                             onClick={async () => {
+                                const duration = document.getElementById('exp-duration').value;
+                                const company = document.getElementById('exp-company').value;
+                                const role = document.getElementById('exp-role').value;
+                                const description = document.getElementById('exp-desc').value;
+                                const achievements = document.getElementById('exp-achievements').value.split(',').map(s => s.trim());
+                                
+                                if (company && role) {
+                                   await addExperience({ duration, company, role, description, achievements });
+                                   loadAllData();
+                                   alert('Journey entry added!');
+                                }
+                             }}
+                             className="btn-primary mt-6 py-3 px-8"
+                           >
+                              Save Journey Entry
+                           </button>
+                        </div>
+                        <div className="space-y-4">
+                           {experiences.map(exp => (
+                              <div key={exp.id} className="glass-morphism p-6 rounded-3xl flex items-center justify-between">
+                                 <div>
+                                    <h4 className="font-bold">{exp.role} @ {exp.company}</h4>
+                                    <p className="text-xs text-text-muted">{exp.duration}</p>
+                                 </div>
+                                 <button onClick={() => { if(window.confirm('Delete?')) deleteExperience(exp.id).then(loadAllData) }} className="text-error">Delete</button>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
+
+                  {activeTab === 'cms' && (
+                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Learnings */}
+                        <div className="glass-morphism p-8 rounded-[2.5rem]">
+                           <h3 className="text-xl font-bold mb-6">Manage Learnings</h3>
+                           <div className="flex gap-2 mb-6">
+                              <input id="learn-name" placeholder="New Learning (e.g., AI)" className="flex-grow bg-dark-700 border border-glass-border p-3 rounded-xl text-sm" />
+                              <button onClick={async () => {
+                                 const name = document.getElementById('learn-name').value;
+                                 if (name) { await addLearning(name); loadAllData(); }
+                              }} className="btn-primary px-4 text-xs">Add</button>
+                           </div>
+                           <div className="space-y-2">
+                              {learnings.map(l => (
+                                 <div key={l.id} className="flex justify-between p-3 bg-white/5 rounded-xl text-sm">
+                                    {l.name}
+                                    <button onClick={() => deleteLearning(l.id).then(loadAllData)} className="text-error">×</button>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Services */}
+                        <div className="glass-morphism p-8 rounded-[2.5rem]">
+                           <h3 className="text-xl font-bold mb-6">Manage Services</h3>
+                           <div className="space-y-4 mb-6">
+                              <input id="serv-title" placeholder="Service Title" className="w-full bg-dark-700 border border-glass-border p-3 rounded-xl text-sm" />
+                              <textarea id="serv-desc" placeholder="Service Description" className="w-full bg-dark-700 border border-glass-border p-3 rounded-xl text-sm h-20" />
+                              <button onClick={async () => {
+                                 const title = document.getElementById('serv-title').value;
+                                 const description = document.getElementById('serv-desc').value;
+                                 if (title) { await addService({ title, description }); loadAllData(); }
+                              }} className="btn-primary w-full py-3">Add Service</button>
+                           </div>
+                           <div className="space-y-4">
+                              {services.map(s => (
+                                 <div key={s.id} className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="flex justify-between font-bold mb-2">
+                                       {s.title}
+                                       <button onClick={() => deleteService(s.id).then(loadAllData)} className="text-error">Delete</button>
+                                    </div>
+                                    <p className="text-xs text-text-muted">{s.description}</p>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+                     </div>
+                  )}
+
                   {activeTab === 'skills' && (
                      <div className="space-y-8">
                         {/* Add Skill Form */}

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FiArrowRight, FiDownload, FiCheckCircle } from 'react-icons/fi';
 import { fetchProfile } from '../services/profileService';
 import { fetchProjects } from '../services/projectService';
+import { fetchLearnings, fetchServices } from '../services/cmsService';
 import TechStack from '../components/TechStack';
 import Experience from '../components/Experience';
 
@@ -13,6 +14,8 @@ const Home = () => {
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const [projectCount, setProjectCount] = useState(0);
   const [techCount, setTechCount] = useState(0);
+  const [dynLearnings, setDynLearnings] = useState([]);
+  const [dynServices, setDynServices] = useState([]);
 
   useEffect(() => {
     const getStats = async () => {
@@ -24,12 +27,15 @@ const Home = () => {
       const { projects } = await fetchProjects();
       if (projects) {
         setProjectCount(projects.length);
-        
-        // Calculate unique technologies
         const allTech = projects.flatMap(p => p.tech_stack || []);
         const uniqueTech = [...new Set(allTech)];
         setTechCount(uniqueTech.length);
       }
+
+      // 3. Fetch CMS Data
+      const [learnRes, servRes] = await Promise.all([fetchLearnings(), fetchServices()]);
+      setDynLearnings(learnRes.learnings);
+      setDynServices(servRes.services);
     };
     getStats();
   }, []);
@@ -132,12 +138,14 @@ const Home = () => {
         <div className="max-w-4xl mx-auto glass-morphism p-10 rounded-[2.5rem] border-accent-primary/10">
           <h2 className="text-2xl font-bold mb-8">🧠 Current <span className="text-accent-tertiary">Learning</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {['Full Stack Development', 'AI & LLM Integration', 'System Design Basics'].map(item => (
-              <div key={item} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
+            {dynLearnings.length > 0 ? dynLearnings.map(item => (
+              <div key={item.id} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
                 <FiCheckCircle className="text-accent-secondary shrink-0" />
-                <span className="text-sm font-medium">{item}</span>
+                <span className="text-sm font-medium">{item.name}</span>
               </div>
-            ))}
+            )) : (
+               <p className="text-xs text-text-muted">Loading learnings...</p>
+            )}
           </div>
         </div>
       </section>
@@ -147,13 +155,15 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12">Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-            {services.map((svc, i) => (
-              <div key={i} className="space-y-4">
+            {dynServices.length > 0 ? dynServices.map((svc, i) => (
+              <div key={svc.id} className="space-y-4">
                 <div className="w-12 h-0.5 bg-accent-primary" />
                 <h3 className="text-xl font-bold">{svc.title}</h3>
-                <p className="text-text-secondary text-sm leading-relaxed">{svc.desc}</p>
+                <p className="text-text-secondary text-sm leading-relaxed">{svc.description}</p>
               </div>
-            ))}
+            )) : (
+               <p className="text-xs text-text-muted">Loading services...</p>
+            )}
           </div>
         </div>
       </section>
