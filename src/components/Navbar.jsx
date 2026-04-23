@@ -79,12 +79,17 @@ const Navbar = () => {
               Admin
             </Link>
           ) : (
-            <button 
-              onClick={handleLogout}
-              className="text-xs font-bold text-error/80 hover:text-error transition-colors tracking-widest uppercase flex items-center gap-1"
-            >
-              <FiLogOut size={14} /> Logout
-            </button>
+            <div className="flex items-center gap-4">
+              <Link to="/secure-dashboard-access" className="text-xs font-bold text-accent-primary hover:bg-accent-primary/10 px-3 py-1.5 rounded-lg transition-colors tracking-widest uppercase">
+                Dashboard
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="text-xs font-bold text-error/80 hover:text-error transition-colors tracking-widest uppercase flex items-center gap-1"
+              >
+                <FiLogOut size={14} /> Logout
+              </button>
+            </div>
           )}
           <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
             Resume <FiExternalLink size={12} />
