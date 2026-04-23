@@ -49,7 +49,7 @@ const HeroScene = () => {
       <MouseLight color={config.mouseLight} />
 
       <Suspense fallback={null}>
-        <ParticleField count={theme === 'cosmic' ? 3000 : 1000} />
+        <ParticleField count={theme === 'cosmic' ? 3000 : 1000} theme={theme} />
         <FloatingShapes theme={theme} />
         
         {theme === 'cyber' && (

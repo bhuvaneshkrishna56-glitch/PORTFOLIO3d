@@ -2,38 +2,45 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const ParticleField = ({ count = 2000 }) => {
+const ParticleField = ({ count = 2000, theme = 'cosmic' }) => {
   const points = useRef();
+
+  // Theme-specific particle colors
+  const themeParticleColors = {
+    cosmic: ['#6c63ff', '#00d4ff', '#ffffff'],
+    cyber: ['#00ff00', '#00ffff', '#003300'],
+    voxel: ['#ff4d4d', '#ffd11a', '#ff944d'],
+    abstract: ['#ffffff', '#a0a0a0', '#e0e0e0'],
+    luxury: ['#d4af37', '#ffd700', '#000000']
+  };
+
+  const selectedColors = themeParticleColors[theme] || themeParticleColors.cosmic;
 
   // Create random positions and colors for the particles
   const [particles, colors] = useMemo(() => {
     const positions = new Float32Array(count * 3);
     const colorValues = new Float32Array(count * 3);
-    const colorOptions = [new THREE.Color('#6c63ff'), new THREE.Color('#00d4ff'), new THREE.Color('#ffffff')];
+    const colorOptions = selectedColors.map(c => new THREE.Color(c));
 
     for (let i = 0; i < count; i++) {
-      // Random position in a large cube
       positions[i * 3] = (Math.random() - 0.5) * 30;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
 
-      // Randomly select from theme colors
       const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
       colorValues[i * 3] = color.r;
       colorValues[i * 3 + 1] = color.g;
       colorValues[i * 3 + 2] = color.b;
     }
     return [positions, colorValues];
-  }, [count]);
+  }, [count, theme]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     if (points.current) {
-      // Rotate the entire field slowly
       points.current.rotation.y = time * 0.05;
       points.current.rotation.x = time * 0.02;
       
-      // Add a slight wave effect
       const positions = points.current.geometry.attributes.position.array;
       for (let i = 0; i < count; i++) {
         positions[i * 3 + 1] += Math.sin(time + positions[i * 3]) * 0.001;
