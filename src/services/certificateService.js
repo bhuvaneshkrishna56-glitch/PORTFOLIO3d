@@ -50,7 +50,8 @@ export const addCertificate = async (certData, file) => {
         issuer: certData.issuer,
         file_url: fileUrl,
         file_path: filePath,
-        file_name: file.name
+        file_name: file.name,
+        file_type: file.type // Crucial for preview logic!
       }])
       .select();
 
