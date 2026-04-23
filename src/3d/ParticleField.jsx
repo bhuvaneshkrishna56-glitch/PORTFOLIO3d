@@ -2,65 +2,68 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-/**
- * Animated particle field that fills the background of the 3D scene
- * Creates a starfield effect with slowly rotating particles
- */
-const ParticleField = ({ count = 500 }) => {
-  const meshRef = useRef();
+const ParticleField = ({ count = 2000 }) => {
+  const points = useRef();
 
-  // Generate particle positions once using useMemo to avoid re-computation
-  const particles = useMemo(() => {
-    const temp = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+  // Create random positions and colors for the particles
+  const [particles, colors] = useMemo(() => {
+    const positions = new Float32Array(count * 3);
+    const colorValues = new Float32Array(count * 3);
+    const colorOptions = [new THREE.Color('#6c63ff'), new THREE.Color('#00d4ff'), new THREE.Color('#ffffff')];
 
     for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      // Spread particles in a large sphere
-      temp[i3] = (Math.random() - 0.5) * 30;
-      temp[i3 + 1] = (Math.random() - 0.5) * 30;
-      temp[i3 + 2] = (Math.random() - 0.5) * 30;
+      // Random position in a large cube
+      positions[i * 3] = (Math.random() - 0.5) * 30;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
 
-      // Vary colors between accent-primary (#6c63ff) and accent-secondary (#00d4ff)
-      const mix = Math.random();
-      colors[i3] = THREE.MathUtils.lerp(0.424, 0.0, mix);     // R
-      colors[i3 + 1] = THREE.MathUtils.lerp(0.388, 0.831, mix); // G
-      colors[i3 + 2] = THREE.MathUtils.lerp(1.0, 1.0, mix);     // B
-
-      sizes[i] = Math.random() * 0.05 + 0.01;
+      // Randomly select from theme colors
+      const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+      colorValues[i * 3] = color.r;
+      colorValues[i * 3 + 1] = color.g;
+      colorValues[i * 3 + 2] = color.b;
     }
-
-    return { positions: temp, colors, sizes };
+    return [positions, colorValues];
   }, [count]);
 
-  // Slowly rotate the entire particle system each frame
-  useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.03;
-      meshRef.current.rotation.x += delta * 0.01;
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    if (points.current) {
+      // Rotate the entire field slowly
+      points.current.rotation.y = time * 0.05;
+      points.current.rotation.x = time * 0.02;
+      
+      // Add a slight wave effect
+      const positions = points.current.geometry.attributes.position.array;
+      for (let i = 0; i < count; i++) {
+        positions[i * 3 + 1] += Math.sin(time + positions[i * 3]) * 0.001;
+      }
+      points.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
   return (
-    <points ref={meshRef}>
+    <points ref={points}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          args={[particles.positions, 3]}
+          count={particles.length / 3}
+          array={particles}
+          itemSize={3}
         />
         <bufferAttribute
           attach="attributes-color"
-          args={[particles.colors, 3]}
+          count={colors.length / 3}
+          array={colors}
+          itemSize={3}
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.06}
+        size={0.03}
         vertexColors
         transparent
-        opacity={0.8}
-        sizeAttenuation
-        depthWrite={false}
+        opacity={0.6}
+        sizeAttenuation={true}
         blending={THREE.AdditiveBlending}
       />
     </points>

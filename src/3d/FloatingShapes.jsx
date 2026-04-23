@@ -1,81 +1,63 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial } from '@react-three/drei';
+import { MeshDistortMaterial, Float, MeshWobbleMaterial } from '@react-three/drei';
+import * as THREE from 'three';
 
-/**
- * Floating 3D geometric shapes representing skills/projects
- * Each shape floats independently with distortion effects
- */
-
-const FloatingShape = ({ position, color, speed = 1, distort = 0.3, scale = 1, geometry = 'sphere' }) => {
+const Shape = ({ position, color, type, speed = 1, distort = 0.4 }) => {
   const meshRef = useRef();
+  const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
+    const time = state.clock.getElapsedTime();
     if (meshRef.current) {
-      // Gentle rotation based on elapsed time
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * speed * 0.3) * 0.2;
-      meshRef.current.rotation.z = Math.cos(state.clock.elapsedTime * speed * 0.2) * 0.2;
+      meshRef.current.rotation.x = Math.cos(time / 4) * 0.2;
+      meshRef.current.rotation.y = Math.sin(time / 4) * 0.2;
+      
+      // Gentle floating up and down
+      meshRef.current.position.y += Math.sin(time * speed) * 0.002;
     }
   });
 
-  const renderGeometry = () => {
-    switch (geometry) {
-      case 'torus':
-        return <torusGeometry args={[1, 0.4, 16, 32]} />;
-      case 'octahedron':
-        return <octahedronGeometry args={[1, 0]} />;
-      case 'icosahedron':
-        return <icosahedronGeometry args={[1, 0]} />;
-      case 'torusKnot':
-        return <torusKnotGeometry args={[0.8, 0.3, 100, 16]} />;
-      case 'dodecahedron':
-        return <dodecahedronGeometry args={[1, 0]} />;
-      default:
-        return <sphereGeometry args={[1, 32, 32]} />;
-    }
-  };
-
   return (
-    <Float
-      speed={speed}
-      rotationIntensity={0.5}
-      floatIntensity={1.5}
-      floatingRange={[-0.3, 0.3]}
-    >
-      <mesh ref={meshRef} position={position} scale={scale}>
-        {renderGeometry()}
+    <Float speed={speed * 2} rotationIntensity={1.5} floatIntensity={2}>
+      <mesh
+        ref={meshRef}
+        position={position}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        scale={hovered ? 1.2 : 1}
+      >
+        {type === 'sphere' && <sphereGeometry args={[1, 64, 64]} />}
+        {type === 'torus' && <torusGeometry args={[0.7, 0.3, 32, 100]} />}
+        {type === 'box' && <boxGeometry args={[1.2, 1.2, 1.2]} />}
+        
         <MeshDistortMaterial
           color={color}
+          speed={speed * 1.5}
+          distort={distort}
+          radius={1}
           roughness={0.1}
           metalness={0.8}
-          distort={distort}
-          speed={2}
           transparent
-          opacity={0.85}
+          opacity={0.7}
+          envMapIntensity={2}
         />
       </mesh>
     </Float>
   );
 };
 
-/**
- * Collection of floating shapes for the hero scene
- */
 const FloatingShapes = () => {
-  const shapes = [
-    { position: [-3, 2, -2], color: '#6c63ff', speed: 1.2, distort: 0.4, scale: 0.8, geometry: 'sphere' },
-    { position: [3.5, -1, -3], color: '#00d4ff', speed: 0.8, distort: 0.3, scale: 0.6, geometry: 'octahedron' },
-    { position: [-2, -2, -1], color: '#ff6b9d', speed: 1.5, distort: 0.25, scale: 0.5, geometry: 'torus' },
-    { position: [2, 1.5, -4], color: '#6c63ff', speed: 1.0, distort: 0.35, scale: 0.7, geometry: 'icosahedron' },
-    { position: [0, -3, -2], color: '#00d4ff', speed: 0.6, distort: 0.2, scale: 0.4, geometry: 'torusKnot' },
-    { position: [-4, 0, -5], color: '#ff6b9d', speed: 0.9, distort: 0.3, scale: 0.55, geometry: 'dodecahedron' },
-  ];
-
   return (
     <group>
-      {shapes.map((props, i) => (
-        <FloatingShape key={i} {...props} />
-      ))}
+      {/* Primary Hero Shapes */}
+      <Shape position={[-4, 2, -5]} color="#6c63ff" type="sphere" speed={1} distort={0.5} />
+      <Shape position={[4, -1, -4]} color="#00d4ff" type="torus" speed={1.2} distort={0.3} />
+      <Shape position={[-2, -3, -6]} color="#ff6b9d" type="box" speed={0.8} distort={0.2} />
+      
+      {/* Background Subtle Shapes */}
+      <Shape position={[6, 4, -10]} color="#6c63ff" type="sphere" speed={0.5} distort={0.4} />
+      <Shape position={[-7, -2, -8]} color="#00d4ff" type="torus" speed={0.4} distort={0.2} />
     </group>
   );
 };

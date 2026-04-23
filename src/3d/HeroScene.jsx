@@ -1,52 +1,74 @@
-import { Suspense, lazy } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Preload } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, ContactShadows, SpotLight } from '@react-three/drei';
+import { Suspense, useRef } from 'react';
+import FloatingShapes from './FloatingShapes';
+import ParticleField from './ParticleField';
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 
-// Lazy load 3D components for performance
-const ParticleField = lazy(() => import('./ParticleField'));
-const FloatingShapes = lazy(() => import('./FloatingShapes'));
+const MouseLight = () => {
+  const lightRef = useRef();
+  
+  useFrame((state) => {
+    const { x, y } = state.mouse;
+    if (lightRef.current) {
+      // Light follows mouse for dynamic shadows
+      lightRef.current.position.set(x * 10, y * 10, 5);
+    }
+  });
 
-/**
- * Main 3D Hero Scene
- * Contains the interactive Three.js canvas with floating shapes and particles
- * Camera is positioned for an optimal viewing angle
- */
+  return (
+    <spotLight
+      ref={lightRef}
+      intensity={15}
+      distance={20}
+      angle={0.5}
+      penumbra={1}
+      color="#6c63ff"
+    />
+  );
+};
+
 const HeroScene = () => {
   return (
-    <div className="absolute inset-0 w-full h-full">
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
-        dpr={[1, 1.5]} // Limit pixel ratio for performance
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-        }}
-        style={{ background: 'transparent' }}
-      >
-        {/* Ambient & directional lighting for metallic materials */}
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[5, 5, 5]} intensity={0.8} color="#ffffff" />
-        <directionalLight position={[-5, -3, -5]} intensity={0.3} color="#6c63ff" />
-        <pointLight position={[0, 5, 0]} intensity={0.5} color="#00d4ff" />
+    <Canvas
+      shadows
+      dpr={[1, 2]}
+      gl={{ antialias: true, alpha: true }}
+      className="w-full h-full"
+    >
+      <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
+      
+      {/* Lighting System */}
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1.5} color="#00d4ff" />
+      <pointLight position={[-10, -10, -10]} intensity={1} color="#ff6b9d" />
+      <MouseLight />
 
-        <Suspense fallback={null}>
-          <ParticleField count={400} />
-          <FloatingShapes />
-          <Preload all />
-        </Suspense>
-
-        {/* Orbit controls with limits to prevent disorienting camera movement */}
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          autoRotate
-          autoRotateSpeed={0.5}
-          maxPolarAngle={Math.PI / 1.8}
-          minPolarAngle={Math.PI / 3}
+      {/* Background Ambience */}
+      <Suspense fallback={null}>
+        <ParticleField count={3000} />
+        <FloatingShapes />
+        <Environment preset="city" />
+        <ContactShadows
+          position={[0, -4.5, 0]}
+          opacity={0.4}
+          scale={20}
+          blur={2}
+          far={4.5}
         />
-      </Canvas>
-    </div>
+      </Suspense>
+
+      {/* Interactions */}
+      <OrbitControls 
+        enableZoom={false} 
+        enablePan={false}
+        enableRotate={true}
+        rotateSpeed={0.5}
+        autoRotate={true}
+        autoRotateSpeed={0.5}
+      />
+    </Canvas>
   );
 };
 
