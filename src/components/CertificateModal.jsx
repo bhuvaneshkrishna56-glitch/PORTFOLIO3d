@@ -9,7 +9,7 @@ import { getFileCategory } from '../utils/helpers';
 const CertificateModal = ({ certificate, isOpen, onClose }) => {
   if (!certificate) return null;
 
-  const fileCategory = getFileCategory(certificate.file_type);
+  const fileCategory = getFileCategory(certificate.file_type, certificate.file_name);
 
   return (
     <AnimatePresence>

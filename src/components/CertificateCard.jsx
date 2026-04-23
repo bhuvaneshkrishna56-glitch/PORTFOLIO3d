@@ -7,7 +7,7 @@ import { getFileCategory } from '../utils/helpers';
  * Shows a thumbnail preview, title, issuer, and date
  */
 const CertificateCard = ({ certificate, index, onClick }) => {
-  const fileCategory = getFileCategory(certificate.file_type);
+  const fileCategory = getFileCategory(certificate.file_type, certificate.file_name);
 
   return (
     <motion.div

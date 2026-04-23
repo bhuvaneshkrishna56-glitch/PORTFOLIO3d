@@ -39,11 +39,24 @@ export const truncateText = (text, maxLength = 100) => {
  * @param {string} mimeType - File MIME type
  * @returns {'image' | 'pdf' | 'unknown'}
  */
-export const getFileCategory = (mimeType) => {
-  if (!mimeType) return 'unknown';
-  const type = mimeType.toLowerCase();
+/**
+ * Get file type category from MIME type or file name
+ * @param {string} mimeType - File MIME type
+ * @param {string} fileName - Optional file name for extension check
+ * @returns {'image' | 'pdf' | 'unknown'}
+ */
+export const getFileCategory = (mimeType, fileName = '') => {
+  const type = (mimeType || '').toLowerCase();
+  const name = (fileName || '').toLowerCase();
+  
+  // 1. Check MIME type first
   if (type.startsWith('image/')) return 'image';
   if (type.includes('pdf')) return 'pdf';
+  
+  // 2. Backup: Check file extension from name
+  if (name.endsWith('.pdf')) return 'pdf';
+  if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.webp')) return 'image';
+  
   return 'unknown';
 };
 
