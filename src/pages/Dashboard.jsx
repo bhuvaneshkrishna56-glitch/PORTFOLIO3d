@@ -180,37 +180,49 @@ const Dashboard = () => {
                            <p className="text-text-muted text-sm">Choose the 3D soul of your portfolio</p>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                            {[
-                              { id: 'cyber_grid', name: 'Cyberpunk Grid', desc: 'Glowing neon city floor', bg: 'bg-black border-2 border-cyan-500' },
+                              { id: 'cyber_grid', name: 'Cyberpunk Grid', desc: 'Neon city floor', bg: 'bg-black border-2 border-cyan-500' },
                               { id: 'glass_universe', name: 'Glass Universe', desc: 'Floating transparent spheres', bg: 'bg-gradient-to-br from-indigo-900 to-purple-600' },
                               { id: 'neural_net', name: 'Neural Network', desc: 'Pulsing AI data nodes', bg: 'bg-slate-900 border border-blue-400' },
                               { id: 'space_orbit', name: 'Space Orbit', desc: 'Planetary rotation & stars', bg: 'bg-[#050505] shadow-[inset_0_0_20px_white/10]' },
                               { id: 'block_stack', name: 'Block Stack', desc: '3D layered block interface', bg: 'bg-orange-600' },
-                              { id: 'hologram', name: 'Holographic', desc: 'Sci-fi scanline interface', bg: 'bg-black border border-blue-300 opacity-80' },
+                              { id: 'hologram', name: 'Holographic', desc: 'Sci-fi scanline interface', bg: 'bg-black border border-blue-300' },
                               { id: 'tunnel', name: 'Infinite Tunnel', desc: 'Moving depth illusion', bg: 'bg-gradient-to-t from-black via-blue-900 to-black' },
-                              { id: 'liquid_metal', name: 'Liquid Metal', desc: 'Reflective morphing blobs', bg: 'bg-slate-300 shadow-xl' },
-                              { id: 'electric', name: 'Electric Energy', desc: 'Sparking current flow', bg: 'bg-violet-900 shadow-[0_0_15px_violet]' },
-                              { id: 'helix', name: 'DNA Helix', desc: 'Rotating genetic structure', bg: 'bg-green-900' }
+                              { id: 'liquid_metal', name: 'Liquid Metal', desc: 'Reflective morphing blobs', bg: 'bg-slate-300' },
+                              { id: 'electric', name: 'Electric Energy', desc: 'Sparking current flow', bg: 'bg-violet-900' },
+                              { id: 'helix', name: 'DNA Helix', desc: 'Rotating genetic structure', bg: 'bg-green-900' },
+                              
+                              // New Space Collection
+                              { id: 'galaxy_core', name: 'Galaxy Core', desc: 'Swirling spiral galaxy', bg: 'bg-gradient-to-r from-blue-900 via-purple-900 to-black' },
+                              { id: 'warp_speed', name: 'Warp Speed', desc: 'Hyperspace star rush', bg: 'bg-black shadow-[inset_0_0_50px_white/20]' },
+                              { id: 'black_hole', name: 'Black Hole', desc: 'Light-bending event horizon', bg: 'bg-black ring-4 ring-orange-500/30' },
+                              { id: 'nebula', name: 'Nebula Cloud', desc: 'Aesthetic space fog & light', bg: 'bg-gradient-to-tr from-pink-900 to-indigo-900' },
+                              { id: 'solar_system', name: 'Solar System', desc: 'Interactive planetary orbit', bg: 'bg-[#050505]' },
+                              { id: 'planet_surface', name: 'Planet Surface', desc: 'Alien terrain exploration', bg: 'bg-orange-900/50' },
+                              { id: 'space_station', name: 'Space Station', desc: 'Holographic control hub', bg: 'bg-slate-800' },
+                              { id: 'constellation', name: 'Constellation', desc: 'Stellar navigation lines', bg: 'bg-black border border-white/10' },
+                              { id: 'telescope', name: 'Telescope View', desc: 'Circular cosmic lens', bg: 'bg-zinc-900 rounded-full' },
+                              { id: 'portal', name: 'Cosmic Portal', desc: 'Glowing energy ring gateway', bg: 'bg-gradient-to-b from-cyan-600 to-black' }
                            ].map(t => (
                               <motion.div 
                                 key={t.id}
-                                whileHover={{ y: -10 }}
+                                whileHover={{ scale: 1.05 }}
                                 className={`glass-morphism p-5 rounded-[2.5rem] border-2 transition-all cursor-pointer ${
-                                   activeTheme === t.id ? 'border-accent-primary ring-4 ring-accent-primary/20' : 'border-white/5 opacity-60 grayscale hover:grayscale-0'
+                                   activeTheme === t.id ? 'border-accent-primary ring-4 ring-accent-primary/20' : 'border-white/5 opacity-60 hover:opacity-100'
                                 }`}
                                 onClick={async () => {
                                    setActiveTheme(t.id);
                                    const res = await updateProfileTheme(t.id);
                                    if (res.error) alert(res.error);
-                                   else alert(`${t.name} Mode Activated!`);
+                                   else alert(`${t.name} Activated!`);
                                 }}
                               >
-                                 <div className={`w-full h-24 rounded-2xl mb-4 ${t.bg} flex items-center justify-center text-[10px] font-black uppercase text-white`}>
-                                    Preview
+                                 <div className={`w-full h-20 rounded-2xl mb-3 ${t.bg} flex items-center justify-center text-[10px] font-black uppercase text-white overflow-hidden`}>
+                                    {t.id.replace('_', ' ')}
                                  </div>
-                                 <h4 className="font-bold text-sm mb-1">{t.name}</h4>
-                                 <p className="text-[10px] text-text-muted leading-tight">{t.desc}</p>
+                                 <h4 className="font-bold text-xs mb-1">{t.name}</h4>
+                                 <p className="text-[10px] text-text-muted leading-tight h-8 overflow-hidden">{t.desc}</p>
                               </motion.div>
                            ))}
                         </div>

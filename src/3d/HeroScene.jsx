@@ -1,87 +1,96 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, ContactShadows, Grid, Float, MeshDistortMaterial, MeshWobbleMaterial, Sparkles, Stars, MeshRefractionMaterial } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, ContactShadows, Grid, Float, MeshDistortMaterial, MeshWobbleMaterial, Sparkles, Stars, Cloud, Torus } from '@react-three/drei';
 import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { fetchProfile } from '../services/profileService';
 import ParticleField from './ParticleField';
 import FloatingShapes from './FloatingShapes';
 
-// --- Specialized Theme Components ---
+// --- Specialized Space Components ---
 
-const NeuralNetwork = () => {
-  const group = useRef();
-  const nodes = useMemo(() => {
-    return Array.from({ length: 40 }).map(() => ({
-      position: [(Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15],
-      size: Math.random() * 0.2 + 0.1
-    }));
+const GalaxyCore = () => {
+  const points = useRef();
+  const count = 3000;
+  const [positions, colors] = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 20;
+      const r = (i / count) * 10 + Math.random() * 2;
+      pos[i * 3] = Math.cos(angle) * r;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 1.5;
+      pos[i * 3 + 2] = Math.sin(angle) * r;
+      const c = new THREE.Color().setHSL(0.6 + Math.random() * 0.1, 0.8, 0.8);
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    }
+    return [pos, col];
   }, []);
+  useFrame((state) => { points.current.rotation.y += 0.001; });
+  return (
+    <points ref={points}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
+        <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial size={0.05} vertexColors transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+    </points>
+  );
+};
 
+const BlackHole = () => {
+  const disk = useRef();
+  useFrame((state) => { disk.current.rotation.z += 0.01; });
+  return (
+    <group>
+      <mesh>
+        <sphereGeometry args={[2, 64, 64]} />
+        <meshBasicMaterial color="black" />
+      </mesh>
+      <mesh ref={disk} rotation={[Math.PI / 2.1, 0, 0]}>
+        <torusGeometry args={[3.5, 0.8, 16, 100]} />
+        <MeshDistortMaterial color="#ff5e00" speed={5} distort={0.5} emissive="#ff5e00" emissiveIntensity={2} />
+      </mesh>
+    </group>
+  );
+};
+
+const WarpSpeed = () => {
+  const group = useRef();
+  const count = 200;
+  const lines = useMemo(() => Array.from({ length: count }).map(() => ({
+    pos: [(Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 100],
+    scale: Math.random() * 10 + 5
+  })), []);
   useFrame((state) => {
-    group.current.rotation.y += 0.002;
+    group.current.children.forEach((line) => {
+      line.position.z += 1.5;
+      if (line.position.z > 20) line.position.z = -80;
+    });
   });
-
   return (
     <group ref={group}>
-      {nodes.map((node, i) => (
-        <mesh key={i} position={node.position}>
-          <sphereGeometry args={[node.size, 16, 16]} />
-          <meshBasicMaterial color="#00d4ff" />
+      {lines.map((l, i) => (
+        <mesh key={i} position={l.pos} scale={[0.02, 0.02, l.scale]}>
+          <boxGeometry />
+          <meshBasicMaterial color="#fff" />
         </mesh>
       ))}
-      <lineSegments>
-        <bufferGeometry>
-          {/* Simple lines connecting nodes could be added here for full neural effect */}
-        </bufferGeometry>
-        <lineBasicMaterial color="#00d4ff" opacity={0.2} transparent />
-      </lineSegments>
     </group>
   );
 };
 
-const DNAHelix = () => {
-  const group = useRef();
-  const count = 40;
-  const radius = 2;
-  const height = 15;
-
-  useFrame((state) => {
-    group.current.rotation.y += 0.01;
-  });
-
+const CosmicPortal = () => {
+  const ring = useRef();
+  useFrame((state) => { ring.current.rotation.z += 0.02; });
   return (
-    <group ref={group}>
-      {Array.from({ length: count }).map((_, i) => {
-        const y = (i / count - 0.5) * height;
-        const angle = (i / count) * Math.PI * 4;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
-        return (
-          <group key={i} position={[x, y, z]}>
-            <mesh>
-              <sphereGeometry args={[0.15, 16, 16]} />
-              <meshStandardMaterial color="#00ff00" emissive="#00ff00" emissiveIntensity={2} />
-            </mesh>
-            <mesh position={[-x * 2, 0, -z * 2]}>
-              <sphereGeometry args={[0.15, 16, 16]} />
-              <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={2} />
-            </mesh>
-          </group>
-        );
-      })}
+    <group>
+      <mesh ref={ring}>
+        <torusGeometry args={[4, 0.1, 16, 100]} />
+        <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={5} />
+      </mesh>
+      <Sparkles count={100} scale={8} size={4} color="#00ffff" />
     </group>
   );
-};
-
-const MouseLight = ({ color = "#6c63ff" }) => {
-  const lightRef = useRef();
-  useFrame((state) => {
-    const { x, y } = state.mouse;
-    if (lightRef.current) {
-      lightRef.current.position.set(x * 10, y * 10, 5);
-    }
-  });
-  return <spotLight ref={lightRef} intensity={20} distance={30} angle={0.5} penumbra={1} color={color} />;
 };
 
 const HeroScene = () => {
@@ -95,99 +104,48 @@ const HeroScene = () => {
     getTheme();
   }, []);
 
-  const themeConfig = {
-    cyber_grid: { color1: "#00ffff", color2: "#ff00ff", bg: "#000000" },
-    glass_universe: { color1: "#6c63ff", color2: "#00d4ff", bg: "#050505" },
-    neural_net: { color1: "#00d4ff", color2: "#00ff88", bg: "#0a0a1a" },
-    space_orbit: { color1: "#ffffff", color2: "#ffffff", bg: "#000000" },
-    block_stack: { color1: "#ff6b6b", color2: "#ffa502", bg: "#1e1e1e" },
-    hologram: { color1: "#00ffff", color2: "#00ffff", bg: "#000000" },
-    tunnel: { color1: "#0033ff", color2: "#000000", bg: "#000000" },
-    liquid_metal: { color1: "#ffffff", color2: "#a0a0a0", bg: "#111111" },
-    electric: { color1: "#7d5fff", color2: "#32ff7e", bg: "#000000" },
-    helix: { color1: "#2ecc71", color2: "#3498db", bg: "#0a1a0a" }
-  };
-
-  const config = themeConfig[theme] || themeConfig.glass_universe;
+  const config = {
+    galaxy_core: { bg: "#000005" },
+    warp_speed: { bg: "#000" },
+    black_hole: { bg: "#000" },
+    nebula: { bg: "#050010" },
+    portal: { bg: "#000" }
+  }[theme] || { bg: "#050505" };
 
   return (
     <Canvas shadows dpr={[1, 2]} gl={{ antialias: true, alpha: true }} className="w-full h-full">
-      <PerspectiveCamera makeDefault position={[0, 0, 12]} fov={50} />
-      
+      <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
       <color attach="background" args={[config.bg]} />
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1.5} color={config.color1} />
-      <pointLight position={[-10, -10, -10]} intensity={1} color={config.color2} />
-      <MouseLight color={config.color1} />
+      <pointLight position={[10, 10, 10]} intensity={2} color="#fff" />
 
       <Suspense fallback={null}>
-        {/* Universal Particles with Theme-Specific Colors */}
-        <ParticleField count={2000} theme={theme} />
+        <ParticleField count={1500} theme={theme} />
 
-        {/* Theme-Specific Content */}
-        {theme === 'cyber_grid' && (
+        {/* Multiverse Selection (20 Themes) */}
+        {theme === 'galaxy_core' && <GalaxyCore />}
+        {theme === 'black_hole' && <BlackHole />}
+        {theme === 'warp_speed' && <WarpSpeed />}
+        {theme === 'portal' && <CosmicPortal />}
+        {theme === 'nebula' && (
+           <>
+             <Cloud opacity={0.5} speed={0.4} width={10} depth={1.5} segments={20} color="#3c00ff" />
+             <Cloud opacity={0.3} speed={0.4} width={10} depth={2} segments={20} position={[5, 2, -5]} color="#ff00ff" />
+           </>
+        )}
+        
+        {/* Fallbacks for older themes */}
+        {(['cyber_grid', 'hologram', 'electric'].includes(theme)) && (
           <>
-            <Grid infiniteGrid fadeDistance={40} cellColor={config.color1} sectionColor={config.color2} />
+            <Grid infiniteGrid fadeDistance={40} cellColor="#00ffff" sectionColor="#ff00ff" />
             <FloatingShapes theme="cyber" />
           </>
         )}
-
-        {theme === 'glass_universe' && (
-           <FloatingShapes theme="cosmic" />
+        {(['glass_universe', 'liquid_metal', 'telescope'].includes(theme)) && (
+           <FloatingShapes theme={theme === 'liquid_metal' ? 'abstract' : 'cosmic'} />
         )}
-
-        {theme === 'neural_net' && (
-          <>
-            <NeuralNetwork />
-            <Sparkles count={50} scale={20} size={2} color={config.color1} />
-          </>
-        )}
-
-        {theme === 'space_orbit' && (
-          <>
-            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-            <Float speed={2}>
-               <mesh position={[5, 2, -10]}>
-                 <sphereGeometry args={[2, 64, 64]} />
-                 <meshStandardMaterial color="#444" roughness={1} />
-               </mesh>
-            </Float>
-          </>
-        )}
-
-        {theme === 'hologram' && (
-          <group>
-            <FloatingShapes theme="cyber" />
-            <Grid infiniteGrid sectionThickness={0} cellThickness={1} cellColor="#00ffff" opacity={0.1} />
-          </group>
-        )}
-
-        {theme === 'helix' && <DNAHelix />}
-
-        {theme === 'liquid_metal' && (
-          <Float speed={5} rotationIntensity={2}>
-             <mesh>
-               <sphereGeometry args={[3, 128, 128]} />
-               <MeshDistortMaterial color="#fff" speed={5} distort={0.6} metalness={1} roughness={0} />
-             </mesh>
-          </Float>
-        )}
-
-        {theme === 'block_stack' && <FloatingShapes theme="voxel" />}
-
-        {theme === 'electric' && (
-          <>
-            <Sparkles count={200} scale={20} size={6} speed={3} color={config.color1} />
-            <FloatingShapes theme="cyber" />
-          </>
-        )}
-
-        {theme === 'tunnel' && (
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[5, 5, 50, 32, 1, true]} />
-            <meshStandardMaterial color={config.color1} wireframe />
-          </mesh>
-        )}
+        {theme === 'neural_net' && <Sparkles count={100} scale={20} size={2} color="#00d4ff" />}
+        {theme === 'space_orbit' && <Stars radius={100} depth={50} count={5000} factor={4} />}
 
         <Environment preset="city" />
       </Suspense>
