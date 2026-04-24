@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiPlus, FiTrash2, FiEdit2, FiLogOut, FiLayout, FiUser, FiSettings, FiBriefcase, FiExternalLink, FiUpload, FiCheck, FiCpu, FiAward, FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiEdit2, FiLogOut, FiLayout, FiUser, FiSettings, FiBriefcase, FiExternalLink, FiUpload, FiCheck, FiCpu, FiAward, FiChevronUp, FiChevronDown, FiGrid } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import { logoutAdmin } from '../services/authService';
 import { fetchProjects } from '../services/projectService';

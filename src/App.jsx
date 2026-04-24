@@ -36,7 +36,7 @@ const EntryGuard = ({ children }) => {
 
   useEffect(() => {
     // This only runs on the very first mount of the app (Full Page Load)
-    const allowedPaths = ['/', '/system-mgmt-ebinesar'];
+    const allowedPaths = ['/', '/system-mgmt-ebinesar', '/secure-dashboard-access'];
     const currentPath = window.location.pathname;
     
     if (!allowedPaths.includes(currentPath)) {
