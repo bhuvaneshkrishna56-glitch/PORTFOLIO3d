@@ -16,12 +16,26 @@ const Home = () => {
   const [techCount, setTechCount] = useState(0);
   const [dynLearnings, setDynLearnings] = useState([]);
   const [dynServices, setDynServices] = useState([]);
+  const [heroContent, setHeroContent] = useState({
+    badge: 'Open for Internships',
+    title: 'Building Scalable & Modern Web Applications',
+    description: "Hi, I'm Ebinesar A. I specialize in Frontend & Full Stack development with a deep interest in AI integration and interactive 3D graphics.",
+    name: 'Ebinesar A'
+  });
 
   useEffect(() => {
     const getStats = async () => {
       // 1. Fetch Profile for Resume
       const { profile } = await fetchProfile();
-      if (profile?.resume_url) setResumeUrl(profile.resume_url);
+      if (profile) {
+        if (profile.resume_url) setResumeUrl(profile.resume_url);
+        setHeroContent({
+          badge: profile.hero_badge || 'Open for Internships',
+          title: profile.hero_title || 'Building Scalable & Modern Web Applications',
+          description: profile.hero_description || "Hi, I'm Ebinesar A. I specialize in Frontend & Full Stack development with a deep interest in AI integration and interactive 3D graphics.",
+          name: profile.full_name || 'Ebinesar A'
+        });
+      }
 
       // 2. Fetch Projects for Stats
       const { projects } = await fetchProjects();
@@ -47,11 +61,6 @@ const Home = () => {
     { value: 'Yes', label: 'Internships', color: 'text-green-400' },
   ];
 
-  const services = [
-    { title: 'Frontend Development', desc: 'Crafting responsive, high-performance UIs using React and Next.js.' },
-    { title: 'Full Stack Web Apps', desc: 'End-to-end applications with secure backends and database design.' },
-    { title: 'UI/UX Design', desc: 'Designing intuitive user interfaces with a focus on modern aesthetics.' },
-  ];
 
   return (
     <div className="min-h-screen">
@@ -70,16 +79,15 @@ const Home = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-morphism text-accent-primary text-xs font-bold uppercase tracking-widest"
           >
             <span className="w-2 h-2 rounded-full bg-accent-primary animate-ping" />
-            Open for Internships
+            {heroContent.badge}
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl sm:text-7xl font-extrabold leading-tight"
+            className="text-5xl sm:text-7xl font-extrabold leading-tight whitespace-pre-line"
           >
-            Building Scalable & <br />
-            <span className="gradient-text">Modern Web Applications</span>
+            {heroContent.title}
           </motion.h1>
 
           <motion.p
@@ -88,7 +96,7 @@ const Home = () => {
             transition={{ delay: 0.2 }}
             className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed"
           >
-            Hi, I'm <span className="text-white font-semibold">Ebinesar A</span>. I specialize in Frontend & Full Stack development with a deep interest in AI integration and interactive 3D graphics.
+            {heroContent.description}
           </motion.p>
 
           <motion.div
@@ -155,7 +163,7 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12">Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-            {dynServices.length > 0 ? dynServices.map((svc, i) => (
+            {dynServices.length > 0 ? dynServices.map((svc) => (
               <div key={svc.id} className="space-y-4">
                 <div className="w-12 h-0.5 bg-accent-primary" />
                 <h3 className="text-xl font-bold">{svc.title}</h3>

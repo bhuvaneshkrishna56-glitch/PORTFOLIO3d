@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiLayout, FiLogOut, FiFolder, FiAward, FiChevronDown, FiChevronUp, FiUser, FiGithub, FiLinkedin, FiTwitter, FiGrid, FiCpu } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiEdit2, FiLogOut, FiLayout, FiUser, FiSettings, FiBriefcase, FiExternalLink, FiUpload, FiCheck, FiCpu, FiAward, FiChevronUp, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import { logoutAdmin } from '../services/authService';
 import { fetchProjects } from '../services/projectService';
 import { fetchCertificates } from '../services/certificateService';
-import { updateResume, deleteResume, updateProfileTheme, fetchProfile } from '../services/profileService';
+import { updateResume, deleteResume, updateProfileTheme, fetchProfile, updateProfileDetails } from '../services/profileService';
 import { fetchSkills, addSkill, deleteSkill } from '../services/skillService';
 import { 
   fetchExperiences, addExperience, deleteExperience,
@@ -35,10 +35,20 @@ const Dashboard = () => {
   const [showCertForm, setShowCertForm] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
   const [activeTab, setActiveTab] = useState('projects');
+  const [profileData, setProfileData] = useState({
+    full_name: '',
+    role: '',
+    hero_badge: '',
+    hero_title: '',
+    hero_description: '',
+    email: '',
+    location: '',
+    github_url: '',
+    linkedin_url: '',
+    twitter_url: ''
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
 
-  useEffect(() => {
-    if (!authLoading && !user) navigate('/system-mgmt-ebinesar');
-  }, [user, authLoading, navigate]);
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
@@ -59,7 +69,21 @@ const Dashboard = () => {
     setServices(servRes.services || []);
     
     const profRes = await fetchProfile();
-    if (profRes.profile?.active_theme) setActiveTheme(profRes.profile.active_theme);
+    if (profRes.profile) {
+      if (profRes.profile.active_theme) setActiveTheme(profRes.profile.active_theme);
+      setProfileData({
+        full_name: profRes.profile.full_name || '',
+        role: profRes.profile.role || '',
+        hero_badge: profRes.profile.hero_badge || '',
+        hero_title: profRes.profile.hero_title || '',
+        hero_description: profRes.profile.hero_description || '',
+        email: profRes.profile.email || '',
+        location: profRes.profile.location || '',
+        github_url: profRes.profile.github_url || '',
+        linkedin_url: profRes.profile.linkedin_url || '',
+        twitter_url: profRes.profile.twitter_url || ''
+      });
+    }
     
     setLoading(false);
   }, []);
@@ -85,7 +109,7 @@ const Dashboard = () => {
               <FiUser size={32} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Welcome, <span className="gradient-text">Ebinesar A</span></h1>
+              <h1 className="text-2xl font-bold">Welcome, <span className="gradient-text">{profileData.full_name || 'Ebinesar A'}</span></h1>
               <p className="text-text-muted text-sm font-medium">Administrator Panel</p>
             </div>
           </div>
@@ -478,17 +502,117 @@ const Dashboard = () => {
                           </div>
                        </div>
 
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase text-text-muted">Display Name</label>
-                            <input disabled value="Ebinesar A" className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" />
-                          </div>
-                          <div className="space-y-2">
-                             <label className="text-xs font-bold uppercase text-text-muted">Role</label>
-                             <input disabled value="Web Developer" className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" />
-                          </div>
-                       </div>
-                    </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div className="space-y-2">
+                             <label className="text-xs font-bold uppercase text-text-muted">Display Name</label>
+                             <input 
+                               value={profileData.full_name} 
+                               onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
+                               className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                             />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Role</label>
+                              <input 
+                                value={profileData.role} 
+                                onChange={(e) => setProfileData({...profileData, role: e.target.value})}
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                              />
+                           </div>
+                           <div className="space-y-2 md:col-span-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Hero Badge (Status)</label>
+                              <input 
+                                value={profileData.hero_badge} 
+                                onChange={(e) => setProfileData({...profileData, hero_badge: e.target.value})}
+                                placeholder="e.g. Open for Internships"
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm font-bold text-accent-primary" 
+                              />
+                           </div>
+                           <div className="space-y-2 md:col-span-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Hero Title</label>
+                              <textarea 
+                                value={profileData.hero_title} 
+                                onChange={(e) => setProfileData({...profileData, hero_title: e.target.value})}
+                                placeholder="e.g. Building Scalable & Modern Web Applications"
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm h-24" 
+                              />
+                           </div>
+                           <div className="space-y-2 md:col-span-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Hero Description</label>
+                              <textarea 
+                                value={profileData.hero_description} 
+                                onChange={(e) => setProfileData({...profileData, hero_description: e.target.value})}
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm h-32" 
+                              />
+                           </div>
+
+                           <div className="pt-6 md:col-span-2 border-t border-white/5">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-accent-secondary mb-6">Contact & Social Links</h4>
+                           </div>
+
+                           <div className="space-y-2">
+                             <label className="text-xs font-bold uppercase text-text-muted">Public Email</label>
+                             <input 
+                               type="email"
+                               value={profileData.email} 
+                               onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                               placeholder="hello@example.com"
+                               className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                             />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Location</label>
+                              <input 
+                                value={profileData.location} 
+                                onChange={(e) => setProfileData({...profileData, location: e.target.value})}
+                                placeholder="Remote / Worldwide"
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                              />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">GitHub URL</label>
+                              <input 
+                                value={profileData.github_url} 
+                                onChange={(e) => setProfileData({...profileData, github_url: e.target.value})}
+                                placeholder="https://github.com/..."
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                              />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">LinkedIn URL</label>
+                              <input 
+                                value={profileData.linkedin_url} 
+                                onChange={(e) => setProfileData({...profileData, linkedin_url: e.target.value})}
+                                placeholder="https://linkedin.com/in/..."
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                              />
+                           </div>
+                           <div className="space-y-2 md:col-span-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Twitter URL</label>
+                              <input 
+                                value={profileData.twitter_url} 
+                                onChange={(e) => setProfileData({...profileData, twitter_url: e.target.value})}
+                                placeholder="https://twitter.com/..."
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
+                              />
+                           </div>
+                        </div>
+
+                        <button 
+                          disabled={savingProfile}
+                          onClick={async () => {
+                            setSavingProfile(true);
+                            const res = await updateProfileDetails(profileData);
+                            if (res.error) alert(res.error);
+                            else alert('Profile updated successfully!');
+                            setSavingProfile(false);
+                            loadAllData();
+                          }}
+                          className="btn-primary w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2"
+                        >
+                          {savingProfile ? 'Saving...' : 'Save Profile Changes'}
+                        </button>
+                     </div>
                   )}
                </>
              )}

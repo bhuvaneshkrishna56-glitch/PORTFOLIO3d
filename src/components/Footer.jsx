@@ -1,14 +1,38 @@
 import { Link } from 'react-router-dom';
 import { FiGithub, FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi';
+import { fetchProfile } from '../services/profileService';
+import { useEffect, useState } from 'react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const [profile, setProfile] = useState({
+    email: 'hello@example.com',
+    github_url: 'https://github.com',
+    linkedin_url: 'https://linkedin.com',
+    twitter_url: 'https://twitter.com'
+  });
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const { profile: data } = await fetchProfile();
+      if (data) {
+        setProfile({
+          email: data.email || 'hello@example.com',
+          github_url: data.github_url || 'https://github.com',
+          linkedin_url: data.linkedin_url || 'https://linkedin.com',
+          twitter_url: data.twitter_url || 'https://twitter.com'
+        });
+      }
+    };
+    getProfile();
+  }, []);
+
   const socialLinks = [
-    { icon: <FiGithub size={18} />, href: 'https://github.com', label: 'GitHub' },
-    { icon: <FiLinkedin size={18} />, href: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: <FiTwitter size={18} />, href: 'https://twitter.com', label: 'Twitter' },
-    { icon: <FiMail size={18} />, href: 'mailto:hello@example.com', label: 'Email' },
+    { icon: <FiGithub size={18} />, href: profile.github_url, label: 'GitHub' },
+    { icon: <FiLinkedin size={18} />, href: profile.linkedin_url, label: 'LinkedIn' },
+    { icon: <FiTwitter size={18} />, href: profile.twitter_url, label: 'Twitter' },
+    { icon: <FiMail size={18} />, href: `mailto:${profile.email}`, label: 'Email' },
   ];
 
   return (
@@ -48,9 +72,6 @@ const Footer = () => {
                   {link.label}
                 </Link>
               ))}
-              <Link to="/system-mgmt-ebinesar" className="mt-4 pt-2 border-t border-white/5 text-[10px] text-text-muted hover:text-accent-primary transition-colors flex items-center gap-1 uppercase tracking-widest font-bold">
-                System Access
-              </Link>
             </div>
           </div>
 

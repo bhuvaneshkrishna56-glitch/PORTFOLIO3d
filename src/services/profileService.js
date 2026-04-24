@@ -101,3 +101,28 @@ export const deleteResume = async () => {
     return { profile: null, error: error.message };
   }
 };
+
+/**
+ * Update profile details (name, title, badge, etc)
+ */
+export const updateProfileDetails = async (details) => {
+  try {
+    const { data: existing } = await supabase.from('profile').select('id');
+    if (existing && existing.length > 0) {
+        const { data, error } = await supabase
+          .from('profile')
+          .update({ 
+            ...details, 
+            updated_at: new Date().toISOString() 
+          })
+          .eq('id', existing[0].id)
+          .select();
+        
+        if (error) throw error;
+        return { profile: data[0], error: null };
+    }
+    return { profile: null, error: 'No profile found' };
+  } catch (error) {
+    return { profile: null, error: error.message };
+  }
+};

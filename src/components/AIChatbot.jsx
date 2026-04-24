@@ -7,7 +7,8 @@ const AIChatbot = () => {
   const [isMaximized, setIsMaximized] = useState(false);
 
   // Your Relevance AI Agent URL (Constructed from your provided link)
-  const agentUrl = "https://app.relevanceai.com/agents/f1db6c/fb6f380d-e8a3-433c-a49e-bc18f32c8452/784ef5f9-2aea-4fc1-8ba1-a98d04f4723e";
+  // Your Relevance AI Agent URL
+  const agentUrl = "https://app.relevanceai.com/agents/f1db6c/fb6f380d-e8a3-433c-a49e-bc18f32c8452/784ef5f9-2aea-4fc1-8ba1-a98d04f4723e/embed-chat?hide_tool_steps=false&hide_file_uploads=false&hide_conversation_list=false&bubble_style=agent&primary_color=%23685FFF&bubble_icon=pd%2Fchat&input_placeholder_text=Type+your+message...&hide_logo=false&hide_description=false";
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
@@ -67,7 +68,7 @@ const AIChatbot = () => {
                 width="100%"
                 height="100%"
                 frameBorder="0"
-                allow="microphone"
+                allow="microphone; clipboard-write; camera"
                 title="Relevance AI Agent"
                 className="w-full h-full"
               />

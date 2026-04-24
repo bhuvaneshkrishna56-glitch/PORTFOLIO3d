@@ -31,7 +31,7 @@ export const addProject = async (projectData, imageFile) => {
       const fileName = `${Math.random()}.${fileExt}`;
       imagePath = `projects/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('portfolio-assets')
         .upload(imagePath, imageFile);
 
@@ -46,7 +46,7 @@ export const addProject = async (projectData, imageFile) => {
     }
 
     // 3. Insert into Database
-    const { data, error } = await supabase
+    const { data: insertedData, error } = await supabase
       .from('projects')
       .insert([{
         title: projectData.title,
@@ -60,7 +60,7 @@ export const addProject = async (projectData, imageFile) => {
       .select();
 
     if (error) throw error;
-    return { project: data[0], error: null };
+    return { project: insertedData[0], error: null };
   } catch (error) {
     return { project: null, error: error.message };
   }

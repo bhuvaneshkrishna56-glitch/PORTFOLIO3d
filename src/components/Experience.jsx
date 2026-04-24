@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCalendar, FiMapPin, FiBriefcase, FiAward } from 'react-icons/fi';
+import { FiCalendar, FiBriefcase } from 'react-icons/fi';
 import { fetchExperiences } from '../services/cmsService';
 
 const Experience = () => {

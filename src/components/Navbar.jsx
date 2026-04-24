@@ -13,11 +13,15 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
+  const [name, setName] = useState('Ebinesar A');
 
   useEffect(() => {
      const getProfile = async () => {
         const { profile } = await fetchProfile();
-        if (profile?.resume_url) setResumeUrl(profile.resume_url);
+        if (profile) {
+          if (profile.resume_url) setResumeUrl(profile.resume_url);
+          if (profile.full_name) setName(profile.full_name);
+        }
      };
      getProfile();
   }, []);
@@ -49,10 +53,10 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="group flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center text-white font-bold text-xl group-hover:rotate-12 transition-transform shadow-lg shadow-accent-primary/20">
-            E
+            {name.charAt(0)}
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight group-hover:text-accent-primary transition-colors">Ebinesar A</span>
+            <span className="text-lg font-bold tracking-tight group-hover:text-accent-primary transition-colors">{name}</span>
             <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted font-bold">Portfolio</span>
           </div>
         </Link>
@@ -74,11 +78,7 @@ const Navbar = () => {
             </Link>
           ))}
           
-          {!user ? (
-            <Link to="/system-mgmt-ebinesar" className="text-xs font-bold text-text-muted hover:text-accent-primary transition-colors tracking-widest uppercase">
-              Admin
-            </Link>
-          ) : (
+          {user && (
             <div className="flex items-center gap-4">
               <Link to="/secure-dashboard-access" className="text-xs font-bold text-accent-primary hover:bg-accent-primary/10 px-3 py-1.5 rounded-lg transition-colors tracking-widest uppercase">
                 Dashboard
@@ -124,15 +124,6 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              {!user && (
-                <Link
-                  to="/system-mgmt-ebinesar"
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-semibold text-text-muted hover:text-accent-primary transition-colors"
-                >
-                  Admin Access
-                </Link>
-              )}
             </div>
           </motion.div>
         )}

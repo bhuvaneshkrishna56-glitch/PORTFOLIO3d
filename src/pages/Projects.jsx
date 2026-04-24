@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { FiExternalLink, FiGithub, FiFolder, FiSearch, FiLayers, FiZap } from 'react-icons/fi';
 import { fetchProjects } from '../services/projectService';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -78,7 +79,7 @@ const Projects = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode='popLayout'>
-              {filteredProjects.map((project, i) => (
+              {filteredProjects.map((project) => (
                 <motion.div
                   layout
                   key={project.id}

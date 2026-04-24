@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiMapPin, FiSend, FiGithub, FiLinkedin, FiTwitter } from 'react-icons/fi';
+import { fetchProfile } from '../services/profileService';
+import { useEffect } from 'react';
 
 /**
  * Contact page with a contact form and social links
@@ -14,6 +16,29 @@ const Contact = () => {
   });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [profile, setProfile] = useState({
+    email: 'hello@example.com',
+    location: 'Remote / Worldwide',
+    github_url: 'https://github.com',
+    linkedin_url: 'https://linkedin.com',
+    twitter_url: 'https://twitter.com'
+  });
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const { profile: data } = await fetchProfile();
+      if (data) {
+        setProfile({
+          email: data.email || 'hello@example.com',
+          location: data.location || 'Remote / Worldwide',
+          github_url: data.github_url || 'https://github.com',
+          linkedin_url: data.linkedin_url || 'https://linkedin.com',
+          twitter_url: data.twitter_url || 'https://twitter.com'
+        });
+      }
+    };
+    getProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,9 +60,9 @@ const Contact = () => {
   };
 
   const socialLinks = [
-    { icon: <FiGithub size={20} />, href: 'https://github.com', label: 'GitHub', color: 'hover:text-white' },
-    { icon: <FiLinkedin size={20} />, href: 'https://linkedin.com', label: 'LinkedIn', color: 'hover:text-blue-400' },
-    { icon: <FiTwitter size={20} />, href: 'https://twitter.com', label: 'Twitter', color: 'hover:text-sky-400' },
+    { icon: <FiGithub size={20} />, href: profile.github_url, label: 'GitHub', color: 'hover:text-white' },
+    { icon: <FiLinkedin size={20} />, href: profile.linkedin_url, label: 'LinkedIn', color: 'hover:text-blue-400' },
+    { icon: <FiTwitter size={20} />, href: profile.twitter_url, label: 'Twitter', color: 'hover:text-sky-400' },
   ];
 
   const inputClasses = 'w-full px-4 py-3.5 rounded-xl bg-dark-600 border border-dark-400 text-text-primary text-sm focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/50 outline-none transition-all placeholder:text-text-muted';
@@ -78,8 +103,8 @@ const Contact = () => {
                   </div>
                   <div className="space-y-0.5">
                     <p className="text-text-primary text-sm font-medium">Email</p>
-                    <a href="mailto:hello@example.com" className="text-text-secondary text-sm hover:text-accent-primary transition-colors">
-                      hello@example.com
+                    <a href={`mailto:${profile.email}`} className="text-text-secondary text-sm hover:text-accent-primary transition-colors">
+                      {profile.email}
                     </a>
                   </div>
                 </div>
@@ -90,7 +115,7 @@ const Contact = () => {
                   </div>
                   <div className="space-y-0.5">
                     <p className="text-text-primary text-sm font-medium">Location</p>
-                    <p className="text-text-secondary text-sm">Remote / Worldwide</p>
+                    <p className="text-text-secondary text-sm">{profile.location}</p>
                   </div>
                 </div>
               </div>
