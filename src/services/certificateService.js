@@ -7,7 +7,7 @@ export const fetchCertificates = async () => {
   try {
     const { data, error } = await supabase
       .from('certificates')
-      .select('*')
+      .select('id, title, issuer, file_url, file_path, file_name, created_at')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -18,42 +18,51 @@ export const fetchCertificates = async () => {
 };
 
 /**
+ * Helper to determine file category
+ */
+const getFileCategory = (mimeType, fileName) => {
+  if (mimeType.startsWith('image/')) return 'image';
+  if (mimeType === 'application/pdf') return 'pdf';
+  return 'other';
+};
+
+/**
  * Upload and save certificate
  */
-export const addCertificate = async (certData, file) => {
+export const uploadCertificate = async (file, metadata = {}, setProgress = () => {}) => {
   try {
-    let fileUrl = '';
-    let filePath = '';
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `certificates/${fileName}`;
 
-    if (file) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      filePath = `certificates/${fileName}`;
+    // Upload file with progress callback (Supabase currently doesn't expose progress, placeholder)
+    const { error: uploadError } = await supabase.storage
+      .from('portfolio-assets')
+      .upload(filePath, file);
 
-      const { error: uploadError } = await supabase.storage
-        .from('portfolio-assets')
-        .upload(filePath, file);
+    if (uploadError) throw uploadError;
 
-      if (uploadError) throw uploadError;
+    const { data: { publicUrl } } = supabase.storage
+      .from('portfolio-assets')
+      .getPublicUrl(filePath);
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('portfolio-assets')
-        .getPublicUrl(filePath);
-      
-      fileUrl = publicUrl;
-    }
+    // Determine file type category
+    const fileType = getFileCategory(file.type, file.name);
 
+    // Insert certificate record with metadata and file_type
     const { data, error } = await supabase
       .from('certificates')
       .insert([{
-        title: certData.title,
-        issuer: certData.issuer,
-        file_url: fileUrl,
+        title: metadata.title || file.name,
+        issuer: metadata.issuer || '',
+        date: metadata.date || null,
+        description: metadata.description || '',
+        file_url: publicUrl,
         file_path: filePath,
         file_name: file.name,
-        file_type: file.type // Crucial for preview logic!
+        file_type: fileType
       }])
-      .select();
+      .select('id, title, issuer, file_url, file_path, file_name, created_at')
 
     if (error) throw error;
     return { certificate: data[0], error: null };

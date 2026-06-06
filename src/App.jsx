@@ -16,6 +16,7 @@ const Projects = lazy(() => import('./pages/Projects'));
 const Certificates = lazy(() => import('./pages/Certificates'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Protected Route Component
