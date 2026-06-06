@@ -215,7 +215,7 @@ const AkashStudioPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const [cursorScale, setCursorScale] = useState(1);
 
   // Form State
@@ -237,7 +237,8 @@ const AkashStudioPortfolioView = () => {
 
         if (profRes.profile) {
           setProfile(profRes.profile);
-          if (profRes.profile.resume_url) setResumeUrl(profRes.profile.resume_url);
+          const resumeFromProfile = profRes.profile.resume_url || localStorage.getItem('portfolio_resume_url');
+          if (resumeFromProfile) setResumeUrl(resumeFromProfile);
         }
         setProjects(projRes.projects || []);
         setSkills(skillRes.skills || []);
@@ -441,11 +442,9 @@ const AkashStudioPortfolioView = () => {
               <a href="#projects" className="px-8 py-3.5 rounded-xl bg-[#66fcf1] hover:bg-[#66fcf1]/80 text-[#0b0c10] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-lg shadow-[#66fcf1]/15">
                 Inspect Builds
               </a>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-[#45a29e]/30 hover:border-[#66fcf1]/50 text-white font-black text-xs uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2">
-                  Download Resume <FiDownload />
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-[#45a29e]/30 hover:border-[#66fcf1]/50 text-white font-black text-xs uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2">
+                Download Resume <FiDownload />
+              </a>
             </motion.div>
           </div>
 

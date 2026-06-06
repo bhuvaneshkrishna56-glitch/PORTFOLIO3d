@@ -94,7 +94,7 @@ const InstagramHarshPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Video Playback states
   const [isPlaying, setIsPlaying] = useState(true);
@@ -370,11 +370,9 @@ const InstagramHarshPortfolioView = () => {
               <button onClick={scrollToAbout} className="px-8 py-3.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-600/35 transition-all">
                 Enter Studio
               </button>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
-                  Download CV <FiDownload />
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+                Download CV <FiDownload />
+              </a>
             </motion.div>
           </div>
 

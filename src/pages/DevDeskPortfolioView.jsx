@@ -167,7 +167,7 @@ const DevDeskPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Form State (styled as terminal commands)
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
@@ -377,11 +377,9 @@ const DevDeskPortfolioView = () => {
               <a href="#projects" className="px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-600/20 transition-all">
                 Access Codebase
               </a>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-emerald-500/30 text-white font-bold text-sm tracking-wide hover:bg-emerald-500/10 transition-all flex items-center gap-2">
-                  <FiDownload /> Download Resume
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-emerald-500/30 text-white font-bold text-sm tracking-wide hover:bg-emerald-500/10 transition-all flex items-center gap-2">
+                <FiDownload /> Download Resume
+              </a>
               <a href="#contact" className="px-8 py-3.5 rounded-xl border border-white/10 text-white font-bold text-sm tracking-wide hover:bg-white/5 transition-all">
                 Initialize Contact
               </a>

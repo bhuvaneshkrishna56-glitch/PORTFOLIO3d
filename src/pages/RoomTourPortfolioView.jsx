@@ -345,7 +345,7 @@ const RoomTourPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Scroll Progress (0 to 1)
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -567,11 +567,9 @@ const RoomTourPortfolioView = () => {
               <a href="#about" className="px-8 py-3.5 rounded-full bg-[#fbbf24] hover:bg-[#fbbf24]/80 text-[#0c0c16] font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#fbbf24]/20">
                 Begin Tour <FiArrowRight className="inline-block ml-1" />
               </a>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
-                  Download Resume <FiDownload />
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+                Download Resume <FiDownload />
+              </a>
             </motion.div>
           </div>
         </section>

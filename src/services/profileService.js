@@ -56,8 +56,13 @@ export const fetchProfile = async () => {
     const localProfile = getLocalProfile();
 
     if (dbProfile) {
-      // Return merged profile
-      return { profile: { ...localProfile, ...dbProfile }, error: null };
+      // Merge DB profile over local profile, but preserve localStorage resume_url
+      // if Supabase returns null (e.g. before user has set one in the DB)
+      const merged = { ...localProfile, ...dbProfile };
+      if (!merged.resume_url && localProfile.resume_url) {
+        merged.resume_url = localProfile.resume_url;
+      }
+      return { profile: merged, error: null };
     }
     
     return { profile: localProfile, error: null };
@@ -223,5 +228,69 @@ export const updateProfileStyles = async (styles) => {
   } catch (error) {
     console.warn('Supabase updateProfileStyles failed, using local styles cache:', error.message);
     return { success: true, profile: getLocalProfile(), error: null };
+  }
+};
+// ------------------------------------------------------------------
+// File Upload Helpers (Certificates, Projects)
+// ------------------------------------------------------------------
+
+/**
+ * Upload a certificate file to Supabase Storage.
+ * Stores the public URL in localStorage under 'portfolio_certificate_url'.
+ * @param {File} file - Certificate PDF or image.
+ * @returns {{ publicUrl: string, error?: any }}
+ */
+export const uploadCertificate = async (file) => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `certificate_${Date.now()}.${fileExt}`;
+    const filePath = `certificates/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('portfolio-assets') // bucket name – ensure it exists in Supabase dashboard
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('portfolio-assets')
+      .getPublicUrl(filePath);
+    const publicUrl = data.publicUrl;
+
+    // Persist locally for quick access / fallback when DB is not reachable
+    localStorage.setItem('portfolio_certificate_url', publicUrl);
+    return { publicUrl };
+  } catch (error) {
+    console.warn('Supabase certificate upload failed:', error.message);
+    return { publicUrl: '', error };
+  }
+};
+
+/**
+ * Upload a generic project asset (image, video, PDF) to Supabase Storage.
+ * Returns the public URL; does not automatically persist to profile.
+ * @param {File} file - The file to upload.
+ * @param {string} folder - Sub‑folder inside the bucket (e.g., 'projects', 'images').
+ * @returns {{ publicUrl: string, error?: any }}
+ */
+export const uploadProjectAsset = async (file, folder = 'projects') => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${folder}_${Date.now()}.${fileExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('portfolio-assets')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('portfolio-assets')
+      .getPublicUrl(filePath);
+    return { publicUrl: data.publicUrl };
+  } catch (error) {
+    console.warn('Supabase project asset upload failed:', error.message);
+    return { publicUrl: '', error };
   }
 };

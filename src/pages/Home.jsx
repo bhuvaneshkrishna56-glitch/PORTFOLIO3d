@@ -25,7 +25,7 @@ const AvatarBentoPortfolioView = lazy(() => import('./AvatarBentoPortfolioView')
 const ScrubAvatarPortfolioView = lazy(() => import('./ScrubAvatarPortfolioView'));
 
 const Home = () => {
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const [projectCount, setProjectCount] = useState(0);
   const [techCount, setTechCount] = useState(0);
   const [dynLearnings, setDynLearnings] = useState([]);
@@ -239,11 +239,9 @@ const Home = () => {
               View Projects <FiArrowRight />
             </Link>
             <Link to="/contact" className="btn-secondary">Contact Me</Link>
-            {resumeUrl && (
-              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary flex items-center gap-2 text-accent-primary border-accent-primary/20">
-                <FiDownload /> Download Resume
-              </a>
-            )}
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary flex items-center gap-2 text-accent-primary border-accent-primary/20">
+              <FiDownload /> Download Resume
+            </a>
           </motion.div>
         </div>
       </section>

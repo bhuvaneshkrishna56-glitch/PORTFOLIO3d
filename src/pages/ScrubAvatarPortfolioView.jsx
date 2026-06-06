@@ -315,7 +315,7 @@ const ScrubAvatarPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Scroll tracking (0 to 1)
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -359,6 +359,10 @@ const ScrubAvatarPortfolioView = () => {
         if (profRes.profile) {
           setProfile(profRes.profile);
           if (profRes.profile.resume_url) setResumeUrl(profRes.profile.resume_url);
+          else {
+            const localUrl = localStorage.getItem('portfolio_resume_url');
+            if (localUrl) setResumeUrl(localUrl);
+          }
         }
         setProjects(projRes.projects || []);
         setSkills(skillRes.skills || []);
@@ -535,11 +539,9 @@ const ScrubAvatarPortfolioView = () => {
                 <a href="#about" className="px-8 py-3.5 rounded-full bg-[#8b5cf6] hover:bg-[#8b5cf6]/80 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#8b5cf6]/20">
                   Begin Tour <FiArrowRight className="inline-block ml-1" />
                 </a>
-                {resumeUrl && (
-                  <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
-                    Resume <FiDownload />
-                  </a>
-                )}
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+                  Resume <FiDownload />
+                </a>
               </motion.div>
             </div>
           </section>

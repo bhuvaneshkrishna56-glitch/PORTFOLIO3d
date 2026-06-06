@@ -233,7 +233,7 @@ const AvatarBentoPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Contact Form state
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
@@ -392,11 +392,9 @@ const AvatarBentoPortfolioView = () => {
               SYSTEM PORTFOLIO
             </h1>
           </div>
-          {resumeUrl && (
-            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-[#06b6d4] hover:bg-[#06b6d4]/80 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg shadow-[#06b6d4]/20">
-              Download Resume <FiDownload />
-            </a>
-          )}
+          <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-[#06b6d4] hover:bg-[#06b6d4]/80 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg shadow-[#06b6d4]/20">
+            Download Resume <FiDownload />
+          </a>
         </div>
 
         {/* Bento Grid */}

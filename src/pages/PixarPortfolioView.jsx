@@ -82,7 +82,7 @@ const PixarPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Form State
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
@@ -361,18 +361,16 @@ const PixarPortfolioView = () => {
                   </div>
                 </div>
               </div>
-              {resumeUrl && (
-                <div className="pt-8">
-                  <a 
-                    href={resumeUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
-                  >
-                    <FiDownload /> Download Resume
-                  </a>
-                </div>
-              )}
+              <div className="pt-8">
+                <a 
+                  href={resumeUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
+                >
+                  <FiDownload /> Download Resume
+                </a>
+              </div>
             </TiltCard>
           </div>
 

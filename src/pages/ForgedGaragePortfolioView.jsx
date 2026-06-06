@@ -177,7 +177,7 @@ const ForgedGaragePortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Form State
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
@@ -396,11 +396,9 @@ const ForgedGaragePortfolioView = () => {
               <a href="#projects" className="px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-600/20">
                 INITIALIZE_MANIFEST
               </a>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 border border-orange-500/30 text-zinc-300 font-bold text-xs uppercase tracking-widest hover:bg-orange-500/10 transition-all flex items-center gap-2">
-                  <FiDownload /> DOWNLOAD_RESUME
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 border border-orange-500/30 text-zinc-300 font-bold text-xs uppercase tracking-widest hover:bg-orange-500/10 transition-all flex items-center gap-2">
+                <FiDownload /> DOWNLOAD_RESUME
+              </a>
               <a href="#contact" className="px-8 py-4 border border-zinc-800 text-zinc-300 font-bold text-xs uppercase tracking-widest hover:bg-white/5 transition-all">
                 REQUEST_HANDSHAKE
               </a>

@@ -12,7 +12,7 @@ const Navbar = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const [name, setName] = useState('Ebinesar A');
   const [logoError, setLogoError] = useState(false);
   const [activeTheme, setActiveTheme] = useState(() => {
@@ -149,11 +149,9 @@ const Navbar = () => {
               </button>
             </div>
           )}
-          {resumeUrl && (
-            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
-              Resume <FiExternalLink size={12} />
-            </a>
-          )}
+          <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
+            Resume <FiExternalLink size={12} />
+          </a>
         </div>
 
         {/* Mobile Toggle */}
@@ -184,11 +182,9 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-lg font-semibold text-accent-secondary">
-                  Resume <FiExternalLink size={14} />
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-lg font-semibold text-accent-secondary">
+                Resume <FiExternalLink size={14} />
+              </a>
               {user && (
                 <div className="flex flex-col gap-3 pt-2 border-t border-glass-border">
                   <Link to="/secure-dashboard-access" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-accent-primary">

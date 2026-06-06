@@ -186,7 +186,7 @@ const ScrollytellingPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Form State
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
@@ -225,6 +225,10 @@ const ScrollytellingPortfolioView = () => {
         if (profRes.profile) {
           setProfile(profRes.profile);
           if (profRes.profile.resume_url) setResumeUrl(profRes.profile.resume_url);
+          else {
+            const localUrl = localStorage.getItem('portfolio_resume_url');
+            if (localUrl) setResumeUrl(localUrl);
+          }
         }
         setProjects(projRes.projects || []);
         setSkills(skillRes.skills || []);
@@ -364,11 +368,9 @@ const ScrollytellingPortfolioView = () => {
                 <a href="#about" className="px-8 py-3.5 rounded-full bg-accent-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-accent-primary/80 transition-all shadow-lg shadow-accent-primary/25">
                   Explore Details
                 </a>
-                {resumeUrl && (
-                  <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all">
-                    Get Resume
-                  </a>
-                )}
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all">
+                  Get Resume
+                </a>
               </div>
             </motion.div>
 

@@ -278,7 +278,7 @@ const PhysicsStackPortfolioView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
 
   // Physics list state
   const [ballsList, setBallsList] = useState([]);
@@ -524,11 +524,9 @@ const PhysicsStackPortfolioView = () => {
               <a href="#skills" className="px-8 py-3.5 rounded-full bg-[#ec4899] hover:bg-[#ec4899]/80 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#ec4899]/25">
                 Play Tech-Physics
               </a>
-              {resumeUrl && (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
-                  Download Resume <FiDownload />
-                </a>
-              )}
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+                Download Resume <FiDownload />
+              </a>
             </motion.div>
           </div>
 

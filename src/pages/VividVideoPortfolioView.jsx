@@ -81,7 +81,7 @@ const VividVideoPortfolioView = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [selectedCert, setSelectedCert] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [resumeUrl, setResumeUrl] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const videoRef = useRef(null);
 
   // Form State
@@ -104,6 +104,10 @@ const VividVideoPortfolioView = () => {
         if (profRes.profile) {
           setProfile(profRes.profile);
           if (profRes.profile.resume_url) setResumeUrl(profRes.profile.resume_url);
+          else {
+            const localUrl = localStorage.getItem('portfolio_resume_url');
+            if (localUrl) setResumeUrl(localUrl);
+          }
         }
         setProjects(projRes.projects || []);
         setSkills(skillRes.skills || []);
@@ -462,18 +466,16 @@ const VividVideoPortfolioView = () => {
                   </div>
                 </div>
               </div>
-              {resumeUrl && (
-                <div className="pt-8">
-                  <a 
-                    href={resumeUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
-                  >
-                    <FiDownload /> Download Resume
-                  </a>
-                </div>
-              )}
+              <div className="pt-8">
+                <a 
+                  href={resumeUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
+                >
+                  <FiDownload /> Download Resume
+                </a>
+              </div>
             </TiltCard>
           </div>
 

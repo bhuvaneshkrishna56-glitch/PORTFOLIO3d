@@ -1,0 +1,240 @@
+
+========================================
+src\components\Navbar.jsx:152
+========================================
+   147:               >
+   148:                 <FiLogOut size={14} /> Logout
+   149:               </button>
+   150:             </div>
+   151:           )}
+=> 152:           <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
+   153:             Resume <FiExternalLink size={12} />
+   154:           </a>
+   155:         </div>
+   156: 
+   157:         {/* Mobile Toggle */}
+
+========================================
+src\components\Navbar.jsx:185
+========================================
+   180:                   }`}
+   181:                 >
+   182:                   {link.name}
+   183:                 </Link>
+   184:               ))}
+=> 185:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-lg font-semibold text-accent-secondary">
+   186:                 Resume <FiExternalLink size={14} />
+   187:               </a>
+   188:               {user && (
+   189:                 <div className="flex flex-col gap-3 pt-2 border-t border-glass-border">
+   190:                   <Link to="/secure-dashboard-access" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-accent-primary">
+
+========================================
+src\pages\AkashStudioPortfolioView.jsx:444
+========================================
+   439:               className="flex flex-wrap gap-4 pt-2"
+   440:             >
+   441:               <a href="#projects" className="px-8 py-3.5 rounded-xl bg-[#66fcf1] hover:bg-[#66fcf1]/80 text-[#0b0c10] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-lg shadow-[#66fcf1]/15">
+   442:                 Inspect Builds
+   443:               </a>
+=> 444:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-[#45a29e]/30 hover:border-[#66fcf1]/50 text-white font-black text-xs uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2">
+   445:                 Download Resume <FiDownload />
+   446:               </a>
+   447:             </motion.div>
+   448:           </div>
+   449: 
+
+========================================
+src\pages\AvatarBentoPortfolioView.jsx:395
+========================================
+   390:             <span className="text-xs font-black uppercase tracking-[0.3em] text-[#06b6d4]">Bento Dashboard</span>
+   391:             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase mt-1">
+   392:               SYSTEM PORTFOLIO
+   393:             </h1>
+   394:           </div>
+=> 395:           <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-[#06b6d4] hover:bg-[#06b6d4]/80 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg shadow-[#06b6d4]/20">
+   396:             Download Resume <FiDownload />
+   397:           </a>
+   398:         </div>
+   399: 
+   400:         {/* Bento Grid */}
+
+========================================
+src\pages\DevDeskPortfolioView.jsx:380
+========================================
+   375:               className="pt-4 flex flex-wrap gap-4"
+   376:             >
+   377:               <a href="#projects" className="px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-600/20 transition-all">
+   378:                 Access Codebase
+   379:               </a>
+=> 380:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-xl border border-emerald-500/30 text-white font-bold text-sm tracking-wide hover:bg-emerald-500/10 transition-all flex items-center gap-2">
+   381:                 <FiDownload /> Download Resume
+   382:               </a>
+   383:               <a href="#contact" className="px-8 py-3.5 rounded-xl border border-white/10 text-white font-bold text-sm tracking-wide hover:bg-white/5 transition-all">
+   384:                 Initialize Contact
+   385:               </a>
+
+========================================
+src\pages\ForgedGaragePortfolioView.jsx:399
+========================================
+   394:               className="pt-4 flex flex-wrap gap-4"
+   395:             >
+   396:               <a href="#projects" className="px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-600/20">
+   397:                 INITIALIZE_MANIFEST
+   398:               </a>
+=> 399:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 border border-orange-500/30 text-zinc-300 font-bold text-xs uppercase tracking-widest hover:bg-orange-500/10 transition-all flex items-center gap-2">
+   400:                 <FiDownload /> DOWNLOAD_RESUME
+   401:               </a>
+   402:               <a href="#contact" className="px-8 py-4 border border-zinc-800 text-zinc-300 font-bold text-xs uppercase tracking-widest hover:bg-white/5 transition-all">
+   403:                 REQUEST_HANDSHAKE
+   404:               </a>
+
+========================================
+src\pages\Home.jsx:242
+========================================
+   237:           >
+   238:             <Link to="/projects" className="btn-primary flex items-center gap-2">
+   239:               View Projects <FiArrowRight />
+   240:             </Link>
+   241:             <Link to="/contact" className="btn-secondary">Contact Me</Link>
+=> 242:             <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary flex items-center gap-2 text-accent-primary border-accent-primary/20">
+   243:               <FiDownload /> Download Resume
+   244:             </a>
+   245:           </motion.div>
+   246:         </div>
+   247:       </section>
+
+========================================
+src\pages\InstagramHarshPortfolioView.jsx:373
+========================================
+   368:               className="flex flex-wrap gap-4 pt-4"
+   369:             >
+   370:               <button onClick={scrollToAbout} className="px-8 py-3.5 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-600/35 transition-all">
+   371:                 Enter Studio
+   372:               </button>
+=> 373:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+   374:                 Download CV <FiDownload />
+   375:               </a>
+   376:             </motion.div>
+   377:           </div>
+   378: 
+
+========================================
+src\pages\PhysicsStackPortfolioView.jsx:527
+========================================
+   522:               className="pt-4 flex flex-wrap gap-4"
+   523:             >
+   524:               <a href="#skills" className="px-8 py-3.5 rounded-full bg-[#ec4899] hover:bg-[#ec4899]/80 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#ec4899]/25">
+   525:                 Play Tech-Physics
+   526:               </a>
+=> 527:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+   528:                 Download Resume <FiDownload />
+   529:               </a>
+   530:             </motion.div>
+   531:           </div>
+   532: 
+
+========================================
+src\pages\PixarPortfolioView.jsx:366
+========================================
+   361:                   </div>
+   362:                 </div>
+   363:               </div>
+   364:               <div className="pt-8">
+   365:                 <a 
+=> 366:                   href={resumeUrl} 
+   367:                   target="_blank" 
+   368:                   rel="noopener noreferrer" 
+   369:                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
+   370:                 >
+   371:                   <FiDownload /> Download Resume
+
+========================================
+src\pages\PrestigelioPortfolioView.jsx:356
+========================================
+   351:               className="pt-4 flex flex-wrap gap-4"
+   352:             >
+   353:               <a href="#projects" className="px-8 py-3 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-purple-600/20 transition-all">
+   354:                 Explore Work
+   355:               </a>
+=> 356:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3 rounded-full border border-purple-500/30 text-white font-bold text-sm tracking-wide hover:bg-purple-500/10 transition-all flex items-center gap-2">
+   357:                 <FiDownload /> Download Resume
+   358:               </a>
+   359:               <a href="#contact" className="px-8 py-3 rounded-full border border-white/10 text-white font-bold text-sm tracking-wide hover:bg-white/5 transition-all">
+   360:                 Let's Talk
+   361:               </a>
+
+========================================
+src\pages\RoomTourPortfolioView.jsx:570
+========================================
+   565:               className="pt-4 flex justify-center gap-4"
+   566:             >
+   567:               <a href="#about" className="px-8 py-3.5 rounded-full bg-[#fbbf24] hover:bg-[#fbbf24]/80 text-[#0c0c16] font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#fbbf24]/20">
+   568:                 Begin Tour <FiArrowRight className="inline-block ml-1" />
+   569:               </a>
+=> 570:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+   571:                 Download Resume <FiDownload />
+   572:               </a>
+   573:             </motion.div>
+   574:           </div>
+   575:         </section>
+
+========================================
+src\pages\ScrollRiderPortfolioView.jsx:701
+========================================
+   696:               className="pt-4 flex justify-center gap-4"
+   697:             >
+   698:               <a href="#about" className="px-8 py-3.5 rounded-full bg-[#10b981] hover:bg-[#10b981]/80 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#10b981]/20">
+   699:                 Start Riding <FiArrowRight className="inline-block ml-1" />
+   700:               </a>
+=> 701:               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+   702:                 Download Resume <FiDownload />
+   703:               </a>
+   704:             </motion.div>
+   705:           </div>
+   706:         </section>
+
+========================================
+src\pages\ScrollytellingPortfolioView.jsx:367
+========================================
+   362:               </p>
+   363:               <div className="mt-8 flex gap-4 pointer-events-auto">
+   364:                 <a href="#about" className="px-8 py-3.5 rounded-full bg-accent-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-accent-primary/80 transition-all shadow-lg shadow-accent-primary/25">
+   365:                   Explore Details
+   366:                 </a>
+=> 367:                 <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all">
+   368:                   Get Resume
+   369:                 </a>
+   370:               </div>
+   371:             </motion.div>
+   372: 
+
+========================================
+src\pages\ScrubAvatarPortfolioView.jsx:538
+========================================
+   533:                 className="pt-4 flex gap-4"
+   534:               >
+   535:                 <a href="#about" className="px-8 py-3.5 rounded-full bg-[#8b5cf6] hover:bg-[#8b5cf6]/80 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#8b5cf6]/20">
+   536:                   Begin Tour <FiArrowRight className="inline-block ml-1" />
+   537:                 </a>
+=> 538:                 <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 rounded-full border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/5 transition-all flex items-center gap-2">
+   539:                   Resume <FiDownload />
+   540:                 </a>
+   541:               </motion.div>
+   542:             </div>
+   543:           </section>
+
+========================================
+src\pages\VividVideoPortfolioView.jsx:467
+========================================
+   462:                   </div>
+   463:                 </div>
+   464:               </div>
+   465:               <div className="pt-8">
+   466:                 <a 
+=> 467:                   href={resumeUrl} 
+   468:                   target="_blank" 
+   469:                   rel="noopener noreferrer" 
+   470:                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-xs uppercase tracking-widest"
+   471:                 >
+   472:                   <FiDownload /> Download Resume
