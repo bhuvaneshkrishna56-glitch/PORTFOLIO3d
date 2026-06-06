@@ -51,3 +51,7 @@
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
+
+.bg-stripes-orange {
+  background-image: repeating-linear-gradient(45deg, #e05a2b, #e05a2b 10px, #08080a 10px, #08080a 20px);
+}

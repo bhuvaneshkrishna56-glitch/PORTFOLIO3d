@@ -1,16 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FiGithub, FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi';
 import { fetchProfile } from '../services/profileService';
 import { useEffect, useState } from 'react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
 
   const [profile, setProfile] = useState({
+    full_name: 'Ebinesar A',
     email: 'hello@example.com',
     github_url: 'https://github.com',
     linkedin_url: 'https://linkedin.com',
-    twitter_url: 'https://twitter.com'
+    twitter_url: 'https://twitter.com',
+    activeTheme: ''
   });
 
   useEffect(() => {
@@ -18,15 +21,22 @@ const Footer = () => {
       const { profile: data } = await fetchProfile();
       if (data) {
         setProfile({
+          full_name: data.full_name || 'Ebinesar A',
           email: data.email || 'hello@example.com',
           github_url: data.github_url || 'https://github.com',
           linkedin_url: data.linkedin_url || 'https://linkedin.com',
-          twitter_url: data.twitter_url || 'https://twitter.com'
+          twitter_url: data.twitter_url || 'https://twitter.com',
+          activeTheme: data.active_theme || ''
         });
       }
     };
     getProfile();
   }, []);
+
+  const premiumThemes = ['pixar_3d', 'prestigelio', 'vivid_video', 'dev_desk', 'forged_garage', 'scrollytelling', 'akash_studio', 'instagram_harsh', 'physics_stack', 'room_tour', 'scroll_rider', 'avatar_bento', 'scrub_avatar'];
+  if (premiumThemes.includes(profile.activeTheme) && location.pathname === '/') {
+    return null;
+  }
 
   const socialLinks = [
     { icon: <FiGithub size={18} />, href: profile.github_url, label: 'GitHub' },
@@ -43,9 +53,9 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
+                <span className="text-white font-bold text-sm">{profile.full_name.charAt(0)}</span>
               </div>
-              <span className="text-lg font-bold gradient-text">Portfolio</span>
+              <span className="text-lg font-bold gradient-text">{profile.full_name}</span>
             </div>
             <p className="text-text-muted text-sm leading-relaxed">
               Crafting digital experiences with modern technologies and creative design.
@@ -100,7 +110,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-glass-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-text-muted text-sm">
-            © {currentYear} Portfolio. All rights reserved.
+            © {currentYear} {profile.full_name}. All rights reserved.
           </p>
           <p className="text-text-muted text-xs">
             Built with React, Three.js & Firebase

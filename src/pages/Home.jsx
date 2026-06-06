@@ -7,15 +7,39 @@ import { fetchProjects } from '../services/projectService';
 import { fetchLearnings, fetchServices } from '../services/cmsService';
 import TechStack from '../components/TechStack';
 import Experience from '../components/Experience';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const HeroScene = lazy(() => import('../3d/HeroScene'));
+const PixarPortfolioView = lazy(() => import('./PixarPortfolioView'));
+const PrestigelioPortfolioView = lazy(() => import('./PrestigelioPortfolioView'));
+const VividVideoPortfolioView = lazy(() => import('./VividVideoPortfolioView'));
+const DevDeskPortfolioView = lazy(() => import('./DevDeskPortfolioView'));
+const ForgedGaragePortfolioView = lazy(() => import('./ForgedGaragePortfolioView'));
+const ScrollytellingPortfolioView = lazy(() => import('./ScrollytellingPortfolioView'));
+const AkashStudioPortfolioView = lazy(() => import('./AkashStudioPortfolioView'));
+const InstagramHarshPortfolioView = lazy(() => import('./InstagramHarshPortfolioView'));
+const PhysicsStackPortfolioView = lazy(() => import('./PhysicsStackPortfolioView'));
+const RoomTourPortfolioView = lazy(() => import('./RoomTourPortfolioView'));
+const ScrollRiderPortfolioView = lazy(() => import('./ScrollRiderPortfolioView'));
+const AvatarBentoPortfolioView = lazy(() => import('./AvatarBentoPortfolioView'));
+const ScrubAvatarPortfolioView = lazy(() => import('./ScrubAvatarPortfolioView'));
 
 const Home = () => {
-  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
+  const [resumeUrl, setResumeUrl] = useState(null);
   const [projectCount, setProjectCount] = useState(0);
   const [techCount, setTechCount] = useState(0);
   const [dynLearnings, setDynLearnings] = useState([]);
   const [dynServices, setDynServices] = useState([]);
+  const [theme, setTheme] = useState(() => {
+    try {
+      const cached = localStorage.getItem('portfolio_custom_styles');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return parsed.active_theme || '';
+      }
+    } catch (e) {}
+    return '';
+  });
   const [heroContent, setHeroContent] = useState({
     badge: 'Open for Internships',
     title: 'Building Scalable & Modern Web Applications',
@@ -25,9 +49,10 @@ const Home = () => {
 
   useEffect(() => {
     const getStats = async () => {
-      // 1. Fetch Profile for Resume
+      // 1. Fetch Profile for Resume & Theme
       const { profile } = await fetchProfile();
       if (profile) {
+        if (profile.active_theme) setTheme(profile.active_theme);
         if (profile.resume_url) setResumeUrl(profile.resume_url);
         setHeroContent({
           badge: profile.hero_badge || 'Open for Internships',
@@ -60,6 +85,111 @@ const Home = () => {
     { value: '1', label: 'Hackathon Win', color: 'text-accent-tertiary' },
     { value: 'Yes', label: 'Internships', color: 'text-green-400' },
   ];
+
+  if (theme === 'pixar_3d') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading cinematic portfolio layout..." />}>
+        <PixarPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'prestigelio') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Prestigelio portfolio layout..." />}>
+        <PrestigelioPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'vivid_video') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Vivid Video portfolio layout..." />}>
+        <VividVideoPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'dev_desk') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Dev Desk portfolio layout..." />}>
+        <DevDeskPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'forged_garage') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Forged Garage portfolio layout..." />}>
+        <ForgedGaragePortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'scrollytelling') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Satya Scrolly portfolio layout..." />}>
+        <ScrollytellingPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'akash_studio') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Akash Studio portfolio layout..." />}>
+        <AkashStudioPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'instagram_harsh') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Insta Harsh portfolio layout..." />}>
+        <InstagramHarshPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'physics_stack') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Physics Stack portfolio layout..." />}>
+        <PhysicsStackPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'room_tour') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Room Tour portfolio layout..." />}>
+        <RoomTourPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'scroll_rider') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Scroll Rider portfolio layout..." />}>
+        <ScrollRiderPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'avatar_bento') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Avatar Bento portfolio layout..." />}>
+        <AvatarBentoPortfolioView />
+      </Suspense>
+    );
+  }
+
+  if (theme === 'scrub_avatar') {
+    return (
+      <Suspense fallback={<LoadingSpinner fullScreen message="Loading Scrub Avatar portfolio layout..." />}>
+        <ScrubAvatarPortfolioView />
+      </Suspense>
+    );
+  }
+
 
 
   return (
@@ -109,9 +239,11 @@ const Home = () => {
               View Projects <FiArrowRight />
             </Link>
             <Link to="/contact" className="btn-secondary">Contact Me</Link>
-            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary flex items-center gap-2 text-accent-primary border-accent-primary/20">
-              <FiDownload /> Download Resume
-            </a>
+            {resumeUrl && (
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary flex items-center gap-2 text-accent-primary border-accent-primary/20">
+                <FiDownload /> Download Resume
+              </a>
+            )}
           </motion.div>
         </div>
       </section>

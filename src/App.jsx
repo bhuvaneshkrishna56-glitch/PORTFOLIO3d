@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import AIChatbot from './components/AIChatbot';
 import LoadingSpinner from './components/LoadingSpinner';
 import { useAuth } from './hooks/useAuth';
+import { applyTheme } from './utils/themeHelper';
+import { fetchProfile } from './services/profileService';
 
 
 // Lazy load pages for performance
@@ -53,6 +55,38 @@ const EntryGuard = ({ children }) => {
 
 function App() {
   const { loading } = useAuth();
+
+  useEffect(() => {
+    try {
+      const localStylesStr = localStorage.getItem('portfolio_custom_styles');
+      if (localStylesStr) {
+        applyTheme(JSON.parse(localStylesStr));
+      }
+    } catch (e) {
+      console.error('Failed to apply local styles:', e);
+    }
+
+    const initTheme = async () => {
+      try {
+        const { profile } = await fetchProfile();
+        if (profile) {
+          applyTheme(profile);
+          localStorage.setItem('portfolio_custom_styles', JSON.stringify({
+            bg_color: profile.bg_color || '',
+            text_color: profile.text_color || '',
+            font_family: profile.font_family || '',
+            font_style: profile.font_style || '',
+            font_size: profile.font_size || '',
+            active_theme: profile.active_theme || ''
+          }));
+        }
+      } catch (e) {
+        console.error('Failed to load profile styles:', e);
+      }
+    };
+    initTheme();
+  }, []);
+
 
   if (loading) return <LoadingSpinner fullScreen />;
 

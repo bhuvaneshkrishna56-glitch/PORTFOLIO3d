@@ -6,7 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 import { logoutAdmin } from '../services/authService';
 import { fetchProjects } from '../services/projectService';
 import { fetchCertificates } from '../services/certificateService';
-import { updateResume, deleteResume, updateProfileTheme, fetchProfile, updateProfileDetails } from '../services/profileService';
+import { updateResume, deleteResume, updateProfileTheme, fetchProfile, updateProfileDetails, updateProfileStyles } from '../services/profileService';
+import { applyTheme } from '../utils/themeHelper';
 import { fetchSkills, addSkill, deleteSkill } from '../services/skillService';
 import { 
   fetchExperiences, addExperience, deleteExperience,
@@ -45,7 +46,12 @@ const Dashboard = () => {
     location: '',
     github_url: '',
     linkedin_url: '',
-    twitter_url: ''
+    twitter_url: '',
+    bg_color: '',
+    text_color: '',
+    font_family: '',
+    font_style: 'normal',
+    font_size: ''
   });
   const [savingProfile, setSavingProfile] = useState(false);
 
@@ -81,7 +87,12 @@ const Dashboard = () => {
         location: profRes.profile.location || '',
         github_url: profRes.profile.github_url || '',
         linkedin_url: profRes.profile.linkedin_url || '',
-        twitter_url: profRes.profile.twitter_url || ''
+        twitter_url: profRes.profile.twitter_url || '',
+        bg_color: profRes.profile.bg_color || '',
+        text_color: profRes.profile.text_color || '',
+        font_family: profRes.profile.font_family || '',
+        font_style: profRes.profile.font_style || 'normal',
+        font_size: profRes.profile.font_size || ''
       });
     }
     
@@ -206,7 +217,21 @@ const Dashboard = () => {
                         
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                            {[
-                              { id: 'cyber_grid', name: 'Cyber', bg: 'bg-black' },
+                               { id: 'interactive_head', name: '3D Head Follow', bg: 'bg-gradient-to-tr from-pink-500 to-indigo-600 shadow-md text-white' },
+                               { id: 'pixar_3d', name: 'Pixar 3D', bg: 'bg-gradient-to-tr from-violet-600 to-fuchsia-600 shadow-md text-white' },
+                               { id: 'prestigelio', name: 'Prestigelio', bg: 'bg-gradient-to-tr from-purple-800 to-indigo-900 shadow-md text-white' },
+                               { id: 'vivid_video', name: 'Vivid Video', bg: 'bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-500 shadow-md text-white' },
+                               { id: 'dev_desk', name: 'Dev Desk', bg: 'bg-gradient-to-tr from-emerald-600 to-blue-700 shadow-md text-white' },
+                               { id: 'forged_garage', name: 'Forged Garage', bg: 'bg-gradient-to-tr from-amber-600 via-orange-700 to-zinc-900 shadow-md text-white' },
+                               { id: 'scrollytelling', name: 'Satya Scrolly', bg: 'bg-gradient-to-tr from-indigo-600 via-purple-700 to-pink-500 shadow-md text-white' },
+                               { id: 'akash_studio', name: 'Akash Studio', bg: 'bg-gradient-to-tr from-slate-900 via-cyan-900 to-teal-700 shadow-md text-white' },
+                               { id: 'instagram_harsh', name: 'Insta Harsh', bg: 'bg-gradient-to-tr from-purple-600 via-pink-500 to-yellow-500 shadow-md text-white' },
+                               { id: 'physics_stack', name: 'Physics Stack', bg: 'bg-gradient-to-tr from-pink-500 via-indigo-900 to-cyan-500 shadow-md text-white' },
+                               { id: 'room_tour', name: 'Room Tour', bg: 'bg-gradient-to-tr from-amber-500 via-purple-700 to-rose-500 shadow-md text-white' },
+                               { id: 'scroll_rider', name: 'Scroll Rider', bg: 'bg-gradient-to-tr from-emerald-500 via-teal-700 to-amber-500 shadow-md text-white' },
+                               { id: 'avatar_bento', name: 'Avatar Bento', bg: 'bg-gradient-to-tr from-teal-500 via-indigo-600 to-emerald-500 shadow-md text-white' },
+                               { id: 'scrub_avatar', name: 'Scrub Avatar', bg: 'bg-gradient-to-tr from-violet-600 via-fuchsia-600 to-amber-500 shadow-md text-white' },
+                               { id: 'cyber_grid', name: 'Cyber', bg: 'bg-black' },
                               { id: 'glass_universe', name: 'Glass', bg: 'bg-indigo-900' },
                               { id: 'neural_net', name: 'Neural', bg: 'bg-slate-900' },
                               { id: 'space_orbit', name: 'Orbit', bg: 'bg-black' },
@@ -596,15 +621,111 @@ const Dashboard = () => {
                                 className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm" 
                               />
                            </div>
+
+                           <div className="pt-6 md:col-span-2 border-t border-white/5">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-accent-primary mb-6">Style Customization (Applies to all themes)</h4>
+                           </div>
+
+                           <div className="space-y-2">
+                             <label className="text-xs font-bold uppercase text-text-muted">Background Color</label>
+                             <div className="flex gap-2">
+                                <input 
+                                  type="color"
+                                  value={profileData.bg_color || '#000000'} 
+                                  onChange={(e) => setProfileData({...profileData, bg_color: e.target.value})}
+                                  className="w-12 h-10 bg-dark-700 border border-glass-border rounded-xl cursor-pointer" 
+                                />
+                                <input 
+                                  type="text"
+                                  value={profileData.bg_color} 
+                                  onChange={(e) => setProfileData({...profileData, bg_color: e.target.value})}
+                                  placeholder="#090e11"
+                                  className="flex-grow bg-dark-700 border border-glass-border px-4 py-2.5 rounded-xl text-sm" 
+                                />
+                             </div>
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Text Color</label>
+                              <div className="flex gap-2">
+                                 <input 
+                                   type="color"
+                                   value={profileData.text_color || '#ffffff'} 
+                                   onChange={(e) => setProfileData({...profileData, text_color: e.target.value})}
+                                   className="w-12 h-10 bg-dark-700 border border-glass-border rounded-xl cursor-pointer" 
+                                 />
+                                 <input 
+                                   type="text"
+                                   value={profileData.text_color} 
+                                   onChange={(e) => setProfileData({...profileData, text_color: e.target.value})}
+                                   placeholder="#ffffff"
+                                   className="flex-grow bg-dark-700 border border-glass-border px-4 py-2.5 rounded-xl text-sm" 
+                                 />
+                              </div>
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Font Family</label>
+                              <select 
+                                value={profileData.font_family} 
+                                onChange={(e) => setProfileData({...profileData, font_family: e.target.value})}
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm text-white"
+                              >
+                                 <option value="">Default Theme Font</option>
+                                 <option value="Poppins">Poppins</option>
+                                 <option value="Roboto">Roboto</option>
+                                 <option value="Playfair Display">Playfair Display</option>
+                                 <option value="Montserrat">Montserrat</option>
+                                 <option value="Fira Code">Fira Code</option>
+                                 <option value="Merriweather">Merriweather</option>
+                                 <option value="Lora">Lora</option>
+                                 <option value="Outfit">Outfit</option>
+                              </select>
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Font Style</label>
+                              <select 
+                                value={profileData.font_style} 
+                                onChange={(e) => setProfileData({...profileData, font_style: e.target.value})}
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm text-white"
+                              >
+                                 <option value="normal">Normal</option>
+                                 <option value="italic">Italic</option>
+                              </select>
+                           </div>
+
+                           <div className="space-y-2">
+                              <label className="text-xs font-bold uppercase text-text-muted">Font Size</label>
+                              <select 
+                                value={profileData.font_size} 
+                                onChange={(e) => setProfileData({...profileData, font_size: e.target.value})}
+                                className="w-full bg-dark-700 border border-glass-border px-4 py-3 rounded-xl text-sm text-white"
+                              >
+                                 <option value="">Default Size</option>
+                                 <option value="13px">Small (13px)</option>
+                                 <option value="14px">Medium-Small (14px)</option>
+                                 <option value="15px">Medium (15px)</option>
+                                 <option value="16px">Standard (16px)</option>
+                                 <option value="17px">Medium-Large (17px)</option>
+                                 <option value="18px">Large (18px)</option>
+                                 <option value="20px">Extra Large (20px)</option>
+                              </select>
+                           </div>
                         </div>
 
                         <button 
                           disabled={savingProfile}
                           onClick={async () => {
                             setSavingProfile(true);
-                            const res = await updateProfileDetails(profileData);
-                            if (res.error) alert(res.error);
-                            else alert('Profile updated successfully!');
+                            const resDetails = await updateProfileDetails(profileData);
+                            const resStyles = await updateProfileStyles(profileData);
+                            if (resDetails.error) {
+                              alert(resDetails.error);
+                            } else {
+                              applyTheme({ ...profileData, active_theme: activeTheme });
+                              alert('Profile details and custom styles updated successfully!');
+                            }
                             setSavingProfile(false);
                             loadAllData();
                           }}

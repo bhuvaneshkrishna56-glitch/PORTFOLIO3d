@@ -12,8 +12,18 @@ const Navbar = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
+  const [resumeUrl, setResumeUrl] = useState(null);
   const [name, setName] = useState('Ebinesar A');
+  const [logoError, setLogoError] = useState(false);
+  const [activeTheme, setActiveTheme] = useState(() => {
+    try {
+      const cached = localStorage.getItem('portfolio_custom_styles');
+      if (cached) {
+        return JSON.parse(cached).active_theme || '';
+      }
+    } catch (e) {}
+    return '';
+  });
 
   useEffect(() => {
      const getProfile = async () => {
@@ -21,10 +31,31 @@ const Navbar = () => {
         if (profile) {
           if (profile.resume_url) setResumeUrl(profile.resume_url);
           if (profile.full_name) setName(profile.full_name);
+          if (profile.active_theme) setActiveTheme(profile.active_theme);
         }
      };
      getProfile();
+
+     const interval = setInterval(async () => {
+       const { profile } = await fetchProfile();
+       if (profile?.active_theme) {
+         setActiveTheme(profile.active_theme);
+       }
+     }, 3000);
+     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.substring(1);
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location]);
 
   const handleLogout = async () => {
     await logoutAdmin();
@@ -38,12 +69,26 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks = (activeTheme === 'pixar_3d' || activeTheme === 'prestigelio' || activeTheme === 'vivid_video' || activeTheme === 'dev_desk' || activeTheme === 'forged_garage' || activeTheme === 'scrollytelling' || activeTheme === 'akash_studio' || activeTheme === 'instagram_harsh' || activeTheme === 'physics_stack' || activeTheme === 'room_tour' || activeTheme === 'scroll_rider' || activeTheme === 'avatar_bento' || activeTheme === 'scrub_avatar') ? [
+    { name: 'About', path: '/#about' },
+    { name: 'Skills', path: '/#skills' },
+    { name: 'Projects', path: '/#projects' },
+    { name: 'Certificates', path: '/#certificates' },
+    { name: 'Experience', path: '/#experience' },
+    { name: 'Contact', path: '/#contact' }
+  ] : [
     { name: 'Home', path: '/' },
     { name: 'Projects', path: '/projects' },
     { name: 'Certificates', path: '/certificates' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  const isActive = (link) => {
+    if (link.path.startsWith('/#')) {
+      return location.hash === link.path.substring(1);
+    }
+    return location.pathname === link.path;
+  };
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${
@@ -52,11 +97,24 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="group flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center text-white font-bold text-xl group-hover:rotate-12 transition-transform shadow-lg shadow-accent-primary/20">
-            {name.charAt(0)}
+          <div className={`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-accent-primary/20 ${
+            logoError ? 'bg-gradient-to-br from-accent-primary to-accent-secondary' : 'border border-white/10 bg-dark-700'
+          }`}>
+            {!logoError ? (
+              <img
+                src="/logo.jpg"
+                alt="Logo"
+                className="w-full h-full object-cover"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <span className="text-white font-bold text-xl">{name.charAt(0)}</span>
+            )}
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight group-hover:text-accent-primary transition-colors">{name}</span>
+            <span className="text-lg font-bold tracking-tight group-hover:text-accent-primary transition-colors">
+              {name}
+            </span>
             <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted font-bold">Portfolio</span>
           </div>
         </Link>
@@ -68,12 +126,12 @@ const Navbar = () => {
               key={link.name}
               to={link.path}
               className={`text-sm font-semibold transition-all hover:text-accent-primary relative group ${
-                location.pathname === link.path ? 'text-accent-primary' : 'text-text-secondary'
+                isActive(link) ? 'text-accent-primary' : 'text-text-secondary'
               }`}
             >
               {link.name}
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-accent-primary transition-all group-hover:w-full ${
-                location.pathname === link.path ? 'w-full' : ''
+                isActive(link) ? 'w-full' : ''
               }`} />
             </Link>
           ))}
@@ -91,9 +149,11 @@ const Navbar = () => {
               </button>
             </div>
           )}
-          <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
-            Resume <FiExternalLink size={12} />
-          </a>
+          {resumeUrl && (
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-accent-secondary border border-accent-secondary/30 px-3 py-1.5 rounded-lg hover:bg-accent-secondary/10 transition-all">
+              Resume <FiExternalLink size={12} />
+            </a>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -118,12 +178,27 @@ const Navbar = () => {
                   to={link.path}
                   onClick={() => setIsOpen(false)}
                   className={`text-lg font-semibold ${
-                    location.pathname === link.path ? 'text-accent-primary' : 'text-text-secondary'
+                    isActive(link) ? 'text-accent-primary' : 'text-text-secondary'
                   }`}
                 >
                   {link.name}
                 </Link>
               ))}
+              {resumeUrl && (
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-lg font-semibold text-accent-secondary">
+                  Resume <FiExternalLink size={14} />
+                </a>
+              )}
+              {user && (
+                <div className="flex flex-col gap-3 pt-2 border-t border-glass-border">
+                  <Link to="/secure-dashboard-access" onClick={() => setIsOpen(false)} className="text-lg font-semibold text-accent-primary">
+                    Dashboard
+                  </Link>
+                  <button onClick={handleLogout} className="text-lg font-semibold text-error/80 text-left flex items-center gap-2">
+                    <FiLogOut size={16} /> Logout
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

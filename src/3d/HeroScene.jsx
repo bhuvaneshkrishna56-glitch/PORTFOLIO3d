@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Box, Torus, MeshWobbleMaterial, Center, Sphere, Icosahedron, TorusKnot, Plane, Ring, Cylinder, Octahedron, Tetrahedron, Dodecahedron, Points, PointMaterial } from '@react-three/drei';
+import { useTexture, OrbitControls, PerspectiveCamera, Environment, Grid, Float, MeshDistortMaterial, Sparkles, Stars, Cloud, Box, Torus, MeshWobbleMaterial, Center, Sphere, Icosahedron, TorusKnot, Plane, Ring, Cylinder, Octahedron, Tetrahedron, Dodecahedron, Points, PointMaterial } from '@react-three/drei';
 import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { fetchProfile } from '../services/profileService';
@@ -115,6 +115,348 @@ const PortalScene = () => (
   </group>
 );
 
+
+const InteractivePortrait = () => {
+  const [texture, setTexture] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const ref = useRef();
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load('/avatar.png', (tex) => {
+      setTexture(tex);
+      const img = tex.image;
+      if (img) {
+        setAspectRatio(img.width / img.height);
+      }
+    });
+  }, []);
+
+  useFrame((state) => {
+    if (!texture || !ref.current) return;
+    const { x, y } = state.pointer;
+
+    // Tilt the entire 3D body structure to follow cursor
+    ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, x * 0.4, 0.08);
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, -y * 0.3, 0.08);
+
+    // Parallax shift with float animation
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, x * 0.8, 0.08);
+    ref.current.position.y = THREE.MathUtils.lerp(
+      ref.current.position.y,
+      -1.2 - y * 0.6 + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.15,
+      0.08
+    );
+  });
+
+  if (!texture) return null;
+
+  return (
+    <mesh ref={ref} position={[0, -1.2, 0]}>
+      <planeGeometry args={[6.75 * aspectRatio, 6.75]} />
+      <meshBasicMaterial map={texture} transparent />
+    </mesh>
+  );
+};
+
+const PixarAvatarScene = () => {
+  const [texture, setTexture] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const ref = useRef();
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load('/avatar.png', (tex) => {
+      setTexture(tex);
+      const img = tex.image;
+      if (img) {
+        setAspectRatio(img.width / img.height);
+      }
+    });
+  }, []);
+
+  useFrame((state) => {
+    if (!texture || !ref.current) return;
+    const { x, y } = state.pointer;
+
+    // Tilt the entire 3D body structure to follow cursor
+    ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, x * 0.45, 0.08);
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, -y * 0.35, 0.08);
+
+    // Parallax shift with gentle floating float animation
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, x * 0.6, 0.08);
+    ref.current.position.y = THREE.MathUtils.lerp(
+      ref.current.position.y,
+      -1.2 - y * 0.4 + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.15,
+      0.08
+    );
+  });
+
+  if (!texture) return null;
+
+  return (
+    <group>
+      {/* Dynamic cinematic spotlights hitting the character */}
+      <spotLight position={[0, 8, 4]} angle={0.6} penumbra={1} intensity={10} color="#ffffff" castShadow />
+      
+      {/* Strong backlight purple neon glow directly behind the character */}
+      <pointLight position={[0, 0, -2]} intensity={15} distance={8} color="#a855f7" />
+      
+      {/* Accent blue glow for high-end look */}
+      <pointLight position={[-3, -1, -1]} intensity={8} distance={8} color="#3b82f6" />
+      
+      {/* Glowing backdrop rings behind the character */}
+      <mesh position={[0, -0.6, -2.5]}>
+        <ringGeometry args={[2.5, 2.7, 64]} />
+        <meshBasicMaterial color="#a855f7" toneMapped={false} />
+      </mesh>
+      
+      <mesh position={[0, -0.6, -2.55]}>
+        <ringGeometry args={[2.8, 2.9, 64]} />
+        <meshBasicMaterial color="#3b82f6" toneMapped={false} />
+      </mesh>
+
+      {/* Floating particles around character */}
+      <Sparkles count={120} scale={7} color="#a855f7" speed={1.2} size={3} />
+      <Sparkles count={80} scale={6} color="#3b82f6" speed={0.8} size={2.5} />
+
+      {/* Main Avatar Mesh */}
+      <mesh ref={ref} position={[0, -1.2, 0]}>
+        <planeGeometry args={[6.75 * aspectRatio, 6.75]} />
+        <meshBasicMaterial map={texture} transparent />
+      </mesh>
+    </group>
+  );
+};
+
+
+const DevDeskScene = () => {
+  const [texture, setTexture] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const ref = useRef();
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load('/dev_desk_avatar.png', (tex) => {
+      setTexture(tex);
+      const img = tex.image;
+      if (img) {
+        setAspectRatio(img.width / img.height);
+      }
+    });
+  }, []);
+
+  useFrame((state) => {
+    if (!texture || !ref.current) return;
+    const { x, y } = state.pointer;
+
+    // Gentle cursor follow rotation
+    ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, x * 0.35, 0.08);
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, -y * 0.25, 0.08);
+
+    // Parallax shift with gentle floating float animation
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, x * 0.5, 0.08);
+    ref.current.position.y = THREE.MathUtils.lerp(
+      ref.current.position.y,
+      -1.3 - y * 0.3 + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.12,
+      0.08
+    );
+  });
+
+  if (!texture) return null;
+
+  return (
+    <group>
+      {/* Dev workspace dynamic lights */}
+      <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={12} color="#10B981" castShadow />
+      <spotLight position={[-5, 10, 5]} angle={0.5} penumbra={1} intensity={8} color="#3B82F6" />
+      
+      {/* Backlight glow */}
+      <pointLight position={[0, -1, -3]} intensity={18} distance={10} color="#10B981" />
+      <pointLight position={[2, 1, -2]} intensity={12} distance={8} color="#3B82F6" />
+
+      {/* Cyber Grid background */}
+      <group position={[0, -4.5, -4]} rotation={[Math.PI / 2.2, 0, 0]}>
+        <Grid infiniteGrid sectionSize={1} sectionColor="#10b981" sectionThickness={1.2} fadeDistance={25} cellColor="#1e293b" />
+      </group>
+
+      {/* Floating particles around coding workspace */}
+      <Sparkles count={100} scale={8} color="#10b981" speed={1} size={2.5} />
+      <Sparkles count={60} scale={6} color="#3b82f6" speed={0.8} size={2} />
+
+      {/* Futuristic Code/Matrix lines on floating panels behind */}
+      <group position={[-4, 1, -3]} rotation={[0, 0.4, 0]}>
+        <mesh>
+          <planeGeometry args={[3, 5]} />
+          <meshBasicMaterial color="#10b981" wireframe transparent opacity={0.15} />
+        </mesh>
+        <Sparkles count={30} scale={3} color="#10b981" speed={1.5} size={2} />
+      </group>
+
+      <group position={[4, 1, -3]} rotation={[0, -0.4, 0]}>
+        <mesh>
+          <planeGeometry args={[3, 5]} />
+          <meshBasicMaterial color="#3b82f6" wireframe transparent opacity={0.15} />
+        </mesh>
+        <Sparkles count={30} scale={3} color="#3b82f6" speed={1.5} size={2} />
+      </group>
+
+      {/* Main Dev Avatar Mesh */}
+      <mesh ref={ref} position={[0, -1.3, 0]}>
+        <planeGeometry args={[6.5 * aspectRatio, 6.5]} />
+        <meshBasicMaterial map={texture} transparent />
+      </mesh>
+    </group>
+  );
+};
+
+const ForgedGarageScene = () => {
+  const ref = useRef();
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const { x, y } = state.pointer;
+
+    // Gentle camera follow/tilt for mechanical core
+    ref.current.rotation.y = THREE.MathUtils.lerp(
+      ref.current.rotation.y,
+      state.clock.getElapsedTime() * 0.2 + x * 0.4,
+      0.08
+    );
+    ref.current.rotation.x = THREE.MathUtils.lerp(
+      ref.current.rotation.x,
+      state.clock.getElapsedTime() * 0.15 - y * 0.3,
+      0.08
+    );
+
+    // Dynamic floating translation
+    ref.current.position.y = THREE.MathUtils.lerp(
+      ref.current.position.y,
+      -0.5 + Math.sin(state.clock.getElapsedTime() * 1.5) * 0.15,
+      0.08
+    );
+  });
+
+  return (
+    <group>
+      {/* Dynamic industrial spotlight safety lights */}
+      <spotLight position={[5, 10, 5]} angle={0.4} penumbra={1} intensity={15} color="#e05a2b" castShadow />
+      <spotLight position={[-5, 10, 5]} angle={0.4} penumbra={1} intensity={10} color="#7a7a85" />
+      
+      {/* High-intensity molten amber backlight */}
+      <pointLight position={[0, -2, -3]} intensity={20} distance={10} color="#d97706" />
+      
+      {/* Safety orange infinite grid */}
+      <group position={[0, -4.5, -4]} rotation={[Math.PI / 2.2, 0, 0]}>
+        <Grid infiniteGrid sectionSize={1} sectionColor="#e05a2b" sectionThickness={1.5} fadeDistance={25} cellColor="#1c1917" />
+      </group>
+
+      {/* Floating Orange Sparks (flying upwards) */}
+      <Sparkles count={150} scale={8} color="#e05a2b" speed={2} size={3} />
+      <Sparkles count={100} scale={6} color="#d97706" speed={1.5} size={2} />
+
+      {/* Rotating Industrial Mechanical Core (highly reflective metallic torus knot) */}
+      <group ref={ref} position={[0, -0.5, 0]}>
+        <TorusKnot args={[1.6, 0.45, 120, 16]}>
+          <meshStandardMaterial 
+            color="#333" 
+            metalness={1.0} 
+            roughness={0.12} 
+            envMapIntensity={2} 
+          />
+        </TorusKnot>
+        
+        {/* Inner molten core sphere */}
+        <Sphere args={[0.9, 32, 32]}>
+          <meshBasicMaterial color="#d97706" toneMapped={false} />
+        </Sphere>
+        
+        <pointLight intensity={8} distance={5} color="#d97706" />
+      </group>
+
+      {/* Steel Girder Columns on sides */}
+      <group position={[-4.5, 1, -3]} rotation={[0, 0.3, 0]}>
+        <mesh>
+          <boxGeometry args={[0.3, 8, 0.3]} />
+          <meshStandardMaterial color="#222" metalness={0.8} roughness={0.4} />
+        </mesh>
+        {/* Emissive wireframe outlines */}
+        <mesh scale={[1.05, 1.05, 1.05]}>
+          <boxGeometry args={[0.3, 8, 0.3]} />
+          <meshBasicMaterial color="#e05a2b" wireframe transparent opacity={0.4} />
+        </mesh>
+      </group>
+
+      <group position={[4.5, 1, -3]} rotation={[0, -0.3, 0]}>
+        <mesh>
+          <boxGeometry args={[0.3, 8, 0.3]} />
+          <meshStandardMaterial color="#222" metalness={0.8} roughness={0.4} />
+        </mesh>
+        <mesh scale={[1.05, 1.05, 1.05]}>
+          <boxGeometry args={[0.3, 8, 0.3]} />
+          <meshBasicMaterial color="#e05a2b" wireframe transparent opacity={0.4} />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+const LaptopScene = () => {
+  const ref = useRef();
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const { x, y } = state.pointer;
+    
+    // Auto rotation plus mouse tracking offset
+    ref.current.rotation.y = THREE.MathUtils.lerp(
+      ref.current.rotation.y, 
+      state.clock.getElapsedTime() * 0.4 + x * 0.6, 
+      0.08
+    );
+    // Mouse tracking tilt
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, 0.25 - y * 0.4, 0.08);
+  });
+
+  return (
+    <group ref={ref} position={[0, -0.5, 0]}>
+      {/* Laptop Base */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[4.2, 0.12, 3.0]} />
+        <meshStandardMaterial color="#1a1a24" roughness={0.3} metalness={0.8} />
+      </mesh>
+
+      {/* Laptop Keyboard Area Accent */}
+      <mesh position={[0, 0.07, 0.4]}>
+        <boxGeometry args={[3.8, 0.02, 1.4]} />
+        <meshStandardMaterial color="#0b0b0f" roughness={0.8} />
+      </mesh>
+
+      {/* Screen Lid (rotated at the hinge) */}
+      <group position={[0, 0.06, -1.4]} rotation={[-Math.PI / 2.6, 0, 0]}>
+        {/* Lid Back */}
+        <mesh position={[0, 1.25, -0.05]}>
+          <boxGeometry args={[4.2, 2.5, 0.1]} />
+          <meshStandardMaterial color="#1a1a24" roughness={0.3} metalness={0.8} />
+        </mesh>
+        
+        {/* Inner Screen Display (glowing lavender) */}
+        <mesh position={[0, 1.25, 0.01]}>
+          <planeGeometry args={[4.0, 2.3]} />
+          <meshBasicMaterial color="#a78bfa" toneMapped={false} />
+        </mesh>
+        
+        {/* Subtle glowing pointlight inside screen */}
+        <pointLight position={[0, 1.25, 0.2]} intensity={5} distance={5} color="#c084fc" />
+      </group>
+
+      {/* Particle sparkles from the keyboard/screen */}
+      <Sparkles count={50} scale={4} color="#c084fc" speed={1.5} size={2.5} />
+      <Sparkles count={30} scale={3} color="#60a5fa" speed={1.0} size={2} />
+    </group>
+  );
+};
+
 const HeroScene = () => {
   const [theme, setTheme] = useState('glass_universe');
 
@@ -155,6 +497,7 @@ const HeroScene = () => {
       case 'flower_field': return <group position={[0,-5,0]}>{Array.from({length: 50}).map((_,i)=><mesh key={i} position={[(Math.random()-0.5)*30, 0, (Math.random()-0.5)*30]}><cylinderGeometry args={[0.1, 0.1, 1]}/><meshStandardMaterial color="#ec4899"/></mesh>)}</group>;
       case 'breeze_leaves': return <Sparkles count={500} scale={20} color="#10b981" speed={2} size={4} />;
       case 'bloom_interact': return <Float><Icosahedron args={[3, 1]}><MeshWobbleMaterial color="#f472b6" factor={1} speed={2} /></Icosahedron></Float>;
+
       case 'glass_forest': return <group position={[0,-5,0]}>{Array.from({length: 20}).map((_,i)=><Cylinder key={i} args={[0.5, 0.5, 10]} position={[(Math.random()-0.5)*20, 5, (Math.random()-0.5)*20]}><meshPhysicalMaterial transmission={1} thickness={1}/></Cylinder>)}</group>;
       case 'butterfly': return <group>{Array.from({length: 10}).map((_, i) => <Float key={i} speed={5}><mesh position={[(Math.random()-0.5)*10, (Math.random()-0.5)*10, (Math.random()-0.5)*10]}><boxGeometry args={[0.5, 0.01, 0.5]} /><meshStandardMaterial color="#818cf8" /></mesh></Float>)}</group>;
       case 'spring_sky': return <group><Environment preset="sunset" /><Cloud position={[0, 0, -10]} /><Cloud position={[5, 2, -15]} /></group>;
@@ -184,17 +527,39 @@ const HeroScene = () => {
       case 'ice_crystal': return <Float><Octahedron args={[4,0]}><MeshWobbleMaterial color="#22d3ee" factor={0.5} metalness={1} /></Octahedron></Float>;
       case 'fire_ember': return <Sparkles count={800} scale={20} color="#ef4444" speed={4} />;
       
+            case 'interactive_head': return <InteractivePortrait />;
+      case 'pixar_3d': return <PixarAvatarScene />;
+      case 'prestigelio': return <LaptopScene />;
+      case 'dev_desk': return <DevDeskScene />;
+      case 'forged_garage': return <ForgedGarageScene />;
+      case 'instagram_harsh':
+        return (
+          <group>
+            <Float speed={3} rotationIntensity={1.5} floatIntensity={1.5}>
+              <TorusKnot args={[1.5, 0.4, 150, 20]}>
+                <meshStandardMaterial 
+                  color="#d6249f" 
+                  roughness={0.1}
+                  metalness={0.9}
+                  emissive="#cd486b"
+                  emissiveIntensity={0.5}
+                />
+              </TorusKnot>
+            </Float>
+            <Sparkles count={400} scale={15} color="#d62976" speed={1.5} size={3} />
+            <Sparkles count={400} scale={15} color="#fccc63" speed={2} size={4} />
+          </group>
+        );
+
       default: return <Float><Icosahedron args={[3, 1]}><MeshDistortMaterial color="#6366f1" speed={2} distort={0.3} /></Icosahedron></Float>;
     }
   };
 
   const getConfig = (t) => {
     const map = {
-      cyber_grid: { bg: "#000", env: "city" },
-      glass_universe: { bg: "#0a0a2e", env: "studio" },
-      neural_net: { bg: "#020617", env: "city" },
-      space_orbit: { bg: "#000", env: "night" },
-      block_stack: { bg: "#431407", env: "apartment" },
+      interactive_head: { bg: "#0d0b18", env: "sunset" },
+      pixar_3d: { bg: "#050505", env: "sunset" },
+      forged_garage: { bg: "#08080a", env: "warehouse" },
       hologram: { bg: "#000", env: "city" },
       tunnel: { bg: "#001", env: "night" },
       liquid_metal: { bg: "#1e293b", env: "studio" },
@@ -257,7 +622,7 @@ const HeroScene = () => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} />
       </Suspense>
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+      <OrbitControls enableZoom={false} enablePan={false} autoRotate={!['interactive_head', 'pixar_3d', 'dev_desk', 'forged_garage', 'scrollytelling', 'akash_studio', 'physics_stack'].includes(theme)} autoRotateSpeed={0.5} />
     </Canvas>
   );
 };
