@@ -13,6 +13,20 @@ const getLocalProfile = () => {
     const parsedProfile = cachedProfile ? JSON.parse(cachedProfile) : {};
 
     const defaultProfile = {
+  id: 'mock-profile-id',
+  full_name: 'Ebinesar',
+  role: 'Creative Web Architect',
+  hero_badge: 'Build With Satya (2024 - Present)',
+  hero_title: 'Crafting immersive 3D R3F scenes, WebGL components, and optimized layout routing.',
+  hero_description: "Creative Intern at Software Enterprise (2022 - 2024). Focused on UI design, Framer Motion transitions, and vanilla CSS component structures.",
+  email: 'hello@example.com',
+  location: 'Remote / Worldwide',
+  github_url: 'https://github.com/Ebinesar91',
+  linkedin_url: 'https://linkedin.com/in/Ebinesar',
+  twitter_url: 'https://twitter.com/Ebinesar',
+  active_theme: activeTheme || 'cosmic',
+  resume_url: localStorage.getItem('portfolio_resume_url') || null
+};
       id: 'mock-profile-id',
       full_name: 'Ebinesar A',
       role: 'Full Stack Developer',
