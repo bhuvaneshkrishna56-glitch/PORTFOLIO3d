@@ -7,7 +7,7 @@ export const fetchCertificates = async () => {
   try {
     const { data, error } = await supabase
       .from('certificates')
-      .select('id, title, issuer, date, file_url, file_path, file_name, created_at')
+      .select('id, title, issuer, file_url, file_path, file_name, file_type, created_at')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -55,8 +55,6 @@ export const uploadCertificate = async (file, metadata = {}, setProgress = () =>
       .insert([{
         title: metadata.title || file.name,
         issuer: metadata.issuer || '',
-        date: metadata.date || null,
-        description: metadata.description || '',
         file_url: publicUrl,
         file_path: filePath,
         file_name: file.name,
