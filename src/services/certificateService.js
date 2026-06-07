@@ -31,6 +31,21 @@ const getFileCategory = (mimeType, fileName) => {
  */
 export const uploadCertificate = async (file, metadata = {}, setProgress = () => {}) => {
   try {
+    const titleVal = (metadata.title || file.name).trim();
+    const issuerVal = (metadata.issuer || '').trim();
+
+    // Check for duplicates
+    const { data: existing, error: checkError } = await supabase
+      .from('certificates')
+      .select('id')
+      .ilike('title', titleVal)
+      .ilike('issuer', issuerVal);
+
+    if (checkError) throw checkError;
+    if (existing && existing.length > 0) {
+      throw new Error('A certificate with this title and issuer already exists.');
+    }
+
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `certificates/${fileName}`;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiTrash2, FiExternalLink, FiGithub, FiAlertTriangle, FiX, FiFolder } from 'react-icons/fi';
+import { FiTrash2, FiExternalLink, FiGithub, FiAlertTriangle, FiX, FiFolder, FiSearch, FiClock } from 'react-icons/fi';
 import { deleteProject } from '../services/projectService';
 
 /**
@@ -11,6 +11,10 @@ const ProjectList = ({ projects, onProjectDeleted }) => {
   const [deletingId, setDeletingId] = useState(null);          // Currently deleting item
   const [confirmDeleteId, setConfirmDeleteId] = useState(null); // Delete confirmation target
   const [error, setError] = useState(null);
+  
+  // Search & Sort State
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
 
   /**
    * Show confirmation dialog before deleting
@@ -57,12 +61,62 @@ const ProjectList = ({ projects, onProjectDeleted }) => {
     );
   }
 
+  // Filter and Sort projects
+  const filteredProjects = projects
+    .filter(p => {
+      const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           p.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'az') {
+        return (a.title || '').localeCompare(b.title || '');
+      }
+      if (sortBy === 'za') {
+        return (b.title || '').localeCompare(a.title || '');
+      }
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
   return (
     <div className="space-y-4" id="project-list">
-      <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
-        📁 Projects
-        <span className="text-sm text-text-muted font-normal">({projects.length})</span>
-      </h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
+          📁 Projects
+          <span className="text-sm text-text-muted font-normal">({projects.length})</span>
+        </h3>
+        
+        {/* Controls */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search */}
+          <div className="relative group">
+            <FiSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input 
+              type="text" 
+              placeholder="Search projects..." 
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="bg-dark-600 border border-dark-400 rounded-lg pl-8 pr-3 py-1.5 text-xs outline-none focus:border-accent-primary transition-all text-text-primary w-40 sm:w-48"
+            />
+          </div>
+          {/* Sort */}
+          <div className="flex items-center gap-1.5">
+            <FiClock size={13} className="text-text-muted" />
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              className="bg-dark-600 border border-dark-400 rounded-lg px-2 py-1.5 text-xs text-text-secondary focus:border-accent-primary outline-none transition-all cursor-pointer"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="az">Alphabetical (A-Z)</option>
+              <option value="za">Alphabetical (Z-A)</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
       {/* Error message */}
       <AnimatePresence>
@@ -82,9 +136,16 @@ const ProjectList = ({ projects, onProjectDeleted }) => {
         )}
       </AnimatePresence>
 
+      {/* No matching results empty state */}
+      {filteredProjects.length === 0 && (
+        <div className="glass-card p-12 text-center">
+          <p className="text-text-muted text-sm">No projects match your search.</p>
+        </div>
+      )}
+
       {/* Project cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projects.map((project, index) => (
+        {filteredProjects.map((project, index) => (
           <motion.div
             key={project.id}
             className="glass-card overflow-hidden group"

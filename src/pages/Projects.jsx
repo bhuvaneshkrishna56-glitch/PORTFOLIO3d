@@ -8,10 +8,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
-  const [selectedYear, setSelectedYear] = useState('All');
-  const [sortBy, setSortBy] = useState('newest');
 
   const categories = ['All', 'HTML', 'JS', 'Full Stack', 'AI'];
 
@@ -24,39 +21,9 @@ const Projects = () => {
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
 
-  // Dynamically get all years of projects
-  const availableYears = ['All', ...new Set(projects
-    .map(p => p.created_at ? new Date(p.created_at).getFullYear().toString() : null)
-    .filter(Boolean)
-  )].sort((a, b) => {
-    if (a === 'All') return -1;
-    if (b === 'All') return 1;
-    return b - a;
-  });
-
   const filteredProjects = projects
-    .filter(p => {
-      const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           p.description?.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFilter = activeFilter === 'All' || p.tech_stack?.includes(activeFilter);
-
-      const pYear = p.created_at ? new Date(p.created_at).getFullYear().toString() : '';
-      const matchesYear = selectedYear === 'All' || pYear === selectedYear;
-
-      return matchesSearch && matchesFilter && matchesYear;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'az') {
-        return (a.title || '').localeCompare(b.title || '');
-      }
-      if (sortBy === 'za') {
-        return (b.title || '').localeCompare(a.title || '');
-      }
-      const dateA = new Date(a.created_at || 0);
-      const dateB = new Date(b.created_at || 0);
-      return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
-    });
+    .filter(p => activeFilter === 'All' || p.tech_stack?.includes(activeFilter))
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-6 sm:px-8">
@@ -71,72 +38,22 @@ const Projects = () => {
         </motion.div>
 
         {/* Controls Container */}
-        <div className="mb-12 flex flex-col xl:flex-row items-center justify-between gap-6 px-4">
-          {/* Search */}
-          <div className="relative w-full xl:max-w-xs group">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-accent-primary transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search projects..." 
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-dark-800 border border-glass-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:border-accent-primary transition-all text-text-primary"
-            />
-          </div>
-
-          {/* Filters, Year Filter, Sort by Time */}
-          <div className="flex flex-wrap items-center justify-center xl:justify-end gap-6 w-full xl:w-auto">
-            {/* Tech Categories */}
-            <div className="flex flex-wrap justify-center gap-2">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveFilter(cat)}
-                  className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
-                    activeFilter === cat 
-                    ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20' 
-                    : 'bg-dark-800 text-text-secondary border border-glass-border hover:bg-dark-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Year filter */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-text-muted font-medium uppercase tracking-wider flex items-center gap-1">
-                  <FiCalendar size={12} /> Year:
-                </span>
-                <select
-                  value={selectedYear}
-                  onChange={e => setSelectedYear(e.target.value)}
-                  className="bg-dark-800 border border-glass-border rounded-xl px-4 py-2 text-sm text-text-secondary focus:border-accent-primary outline-none transition-all cursor-pointer"
-                >
-                  {availableYears.map(year => (
-                    <option key={year} value={year} className="bg-dark-900">{year}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sort by Date */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-text-muted font-medium uppercase tracking-wider flex items-center gap-1">
-                  <FiClock size={12} /> Sort:
-                </span>
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
-                  className="bg-dark-800 border border-glass-border rounded-xl px-4 py-2 text-sm text-text-secondary focus:border-accent-primary outline-none transition-all cursor-pointer"
-                >
-                  <option value="newest" className="bg-dark-900">Newest First</option>
-                  <option value="oldest" className="bg-dark-900">Oldest First</option>
-                  <option value="az" className="bg-dark-900">Alphabetical (A-Z)</option>
-                  <option value="za" className="bg-dark-900">Alphabetical (Z-A)</option>
-                </select>
-              </div>
-            </div>
+        <div className="mb-12 flex items-center justify-center px-4">
+          {/* Tech Categories */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
+                  activeFilter === cat 
+                  ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20' 
+                  : 'bg-dark-800 text-text-secondary border border-glass-border hover:bg-dark-700'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
