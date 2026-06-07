@@ -27,3 +27,19 @@ export const techStackService = {
     return data;
   }
 };
+
+export const getTechStack = async () => {
+  return techStackService.getAll();
+};
+
+export const createTechStack = async (item) => {
+  return techStackService.create(item);
+};
+
+export const updateTechStack = async (id, updates) => {
+  return techStackService.update(id, updates);
+};
+
+export const deleteTechStack = async (id) => {
+  return techStackService.delete(id);
+};

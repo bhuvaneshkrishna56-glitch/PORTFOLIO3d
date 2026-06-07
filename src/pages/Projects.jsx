@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FiExternalLink, FiGithub, FiFolder, FiSearch, FiLayers, FiZap } from 'react-icons/fi';
+import { FiExternalLink, FiGithub, FiFolder, FiSearch, FiLayers, FiZap, FiClock, FiCalendar } from 'react-icons/fi';
 import { fetchProjects } from '../services/projectService';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -10,6 +10,8 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const [selectedYear, setSelectedYear] = useState('All');
+  const [sortBy, setSortBy] = useState('newest');
 
   const categories = ['All', 'HTML', 'JS', 'Full Stack', 'AI'];
 
@@ -22,12 +24,33 @@ const Projects = () => {
 
   useEffect(() => { loadProjects(); }, [loadProjects]);
 
-  const filteredProjects = projects.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         p.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = activeFilter === 'All' || p.techStack?.includes(activeFilter);
-    return matchesSearch && matchesFilter;
+  // Dynamically get all years of projects
+  const availableYears = ['All', ...new Set(projects
+    .map(p => p.created_at ? new Date(p.created_at).getFullYear().toString() : null)
+    .filter(Boolean)
+  )].sort((a, b) => {
+    if (a === 'All') return -1;
+    if (b === 'All') return 1;
+    return b - a;
   });
+
+  const filteredProjects = projects
+    .filter(p => {
+      const matchesSearch = p.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           p.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesFilter = activeFilter === 'All' || p.tech_stack?.includes(activeFilter);
+
+      const pYear = p.created_at ? new Date(p.created_at).getFullYear().toString() : '';
+      const matchesYear = selectedYear === 'All' || pYear === selectedYear;
+
+      return matchesSearch && matchesFilter && matchesYear;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+    });
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-6 sm:px-8">
@@ -42,41 +65,77 @@ const Projects = () => {
         </motion.div>
 
         {/* Controls Container */}
-        <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+        <div className="mb-12 flex flex-col xl:flex-row items-center justify-between gap-6 px-4">
           {/* Search */}
-          <div className="relative w-full md:max-w-xs group">
+          <div className="relative w-full xl:max-w-xs group">
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-accent-primary transition-colors" />
             <input 
               type="text" 
-              placeholder="Search skills, projects..." 
+              placeholder="Search projects..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-dark-800 border border-glass-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:border-accent-primary transition-all"
+              className="w-full bg-dark-800 border border-glass-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:border-accent-primary transition-all text-text-primary"
             />
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  activeFilter === cat 
-                  ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20' 
-                  : 'bg-dark-800 text-text-secondary border border-glass-border hover:bg-dark-700'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          {/* Filters, Year Filter, Sort by Time */}
+          <div className="flex flex-wrap items-center justify-center xl:justify-end gap-6 w-full xl:w-auto">
+            {/* Tech Categories */}
+            <div className="flex flex-wrap justify-center gap-2">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
+                    activeFilter === cat 
+                    ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20' 
+                    : 'bg-dark-800 text-text-secondary border border-glass-border hover:bg-dark-700'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Year filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-text-muted font-medium uppercase tracking-wider flex items-center gap-1">
+                  <FiCalendar size={12} /> Year:
+                </span>
+                <select
+                  value={selectedYear}
+                  onChange={e => setSelectedYear(e.target.value)}
+                  className="bg-dark-800 border border-glass-border rounded-xl px-4 py-2 text-sm text-text-secondary focus:border-accent-primary outline-none transition-all cursor-pointer"
+                >
+                  {availableYears.map(year => (
+                    <option key={year} value={year} className="bg-dark-900">{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sort by Date */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-text-muted font-medium uppercase tracking-wider flex items-center gap-1">
+                  <FiClock size={12} /> Sort:
+                </span>
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value)}
+                  className="bg-dark-800 border border-glass-border rounded-xl px-4 py-2 text-sm text-text-secondary focus:border-accent-primary outline-none transition-all cursor-pointer"
+                >
+                  <option value="newest" className="bg-dark-900">Newest First</option>
+                  <option value="oldest" className="bg-dark-900">Oldest First</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Project Grid */}
         {loading ? (
           <LoadingSpinner />
-        ) : (
+        ) : filteredProjects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode='popLayout'>
               {filteredProjects.map((project) => (
@@ -155,6 +214,22 @@ const Projects = () => {
               ))}
             </AnimatePresence>
           </div>
+        ) : (
+          <motion.div
+            className="text-center py-24 space-y-5"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-dark-600/60 flex items-center justify-center">
+              <FiFolder className="text-text-muted" size={36} />
+            </div>
+            <p className="text-text-secondary text-base">
+              {projects.length === 0 ? "No projects uploaded yet." : "No projects match your filters."}
+            </p>
+            <p className="text-text-muted text-sm">
+              {projects.length === 0 ? "Check back soon!" : "Try refining your search terms or filters."}
+            </p>
+          </motion.div>
         )}
       </div>
     </div>

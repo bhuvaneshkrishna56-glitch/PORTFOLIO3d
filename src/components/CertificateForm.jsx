@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiUploadCloud, FiFile, FiX, FiCheck, FiAlertCircle } from 'react-icons/fi';
-import { addCertificate } from '../services/certificateService';
+import { uploadCertificate } from '../services/certificateService';
 
 /**
  * Certificate input form with:
@@ -59,7 +59,7 @@ const CertificateForm = ({ onCertificateAdded }) => {
     setProgress(0);
 
     try {
-      const result = await addCertificate(formData, file, setProgress);
+      const result = await uploadCertificate(file, formData, setProgress);
 
       if (result.error) {
         setStatus('error');

@@ -7,7 +7,7 @@ export const fetchCertificates = async () => {
   try {
     const { data, error } = await supabase
       .from('certificates')
-      .select('id, title, issuer, file_url, file_path, file_name, created_at')
+      .select('id, title, issuer, date, file_url, file_path, file_name, created_at')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
