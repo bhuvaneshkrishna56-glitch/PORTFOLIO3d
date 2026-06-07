@@ -47,6 +47,12 @@ const Projects = () => {
       return matchesSearch && matchesFilter && matchesYear;
     })
     .sort((a, b) => {
+      if (sortBy === 'az') {
+        return (a.title || '').localeCompare(b.title || '');
+      }
+      if (sortBy === 'za') {
+        return (b.title || '').localeCompare(a.title || '');
+      }
       const dateA = new Date(a.created_at || 0);
       const dateB = new Date(b.created_at || 0);
       return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
@@ -126,6 +132,8 @@ const Projects = () => {
                 >
                   <option value="newest" className="bg-dark-900">Newest First</option>
                   <option value="oldest" className="bg-dark-900">Oldest First</option>
+                  <option value="az" className="bg-dark-900">Alphabetical (A-Z)</option>
+                  <option value="za" className="bg-dark-900">Alphabetical (Z-A)</option>
                 </select>
               </div>
             </div>
